@@ -29,13 +29,13 @@ hotels = [
 ]
 
 
-@router.get("", response_model=list[Hotel])
+@router.get("")
 def get_hotels(
         id: int | None = Query(None, description='Hotel ID'),
         title: str | None = Query(None),
         name: str | None = Query(None),
-        page: int | None = Query(None),
-        per_page: int | None = Query(None),
+        page: int | None = Query(None, ge=1),
+        per_page: int | None = Query(None, ge=1, le=30),
 ):
     hotels_ = []
     for hotel in hotels:
@@ -46,7 +46,9 @@ def get_hotels(
         if name and hotel['name'] != name:
             continue
         hotels_.append(hotel)
-    return hotels_[(page - 1) * per_page : (page - 1) * per_page + per_page]
+    if page and per_page:
+        return hotels_[(page-1) * per_page:(page-1) * per_page + per_page]
+    return hotels_
 
 
 @router.post("")
