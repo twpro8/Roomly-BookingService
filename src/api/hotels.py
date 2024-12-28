@@ -1,63 +1,56 @@
-from fastapi import Query, APIRouter
+from fastapi import Query, APIRouter, Body
+
+from sqlalchemy import insert, select
+
 from src.schemas.hotels import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDep
+from src.database import session_maker
+
+from src.models.hotels import HotelsORM
+from src.database import engine
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"])
 
 
-hotels = [
-    {'id': 1, 'title': 'Ivory Coast Inn', 'name': 'emerald_bay'},
-    {'id': 2, 'title': 'Crimson Peak Lodge', 'name': 'ivory_coast'},
-    {'id': 3, 'title': 'Starlight Inn', 'name': 'blue_horizon'},
-    {'id': 4, 'title': 'Golden Palm Retreat', 'name': 'emerald_bay'},
-    {'id': 5, 'title': 'Emerald Bay Hotel', 'name': 'crimson_peak'},
-    {'id': 6, 'title': 'Amber Waves Lodge', 'name': 'azure_heights'},
-    {'id': 7, 'title': 'Amber Waves Lodge', 'name': 'ivory_coast'},
-    {'id': 8, 'title': 'Crimson Peak Lodge', 'name': 'starlight_inn'},
-    {'id': 9, 'title': 'Azure Heights Resort', 'name': 'ivory_coast'},
-    {'id': 10, 'title': 'Moonlight Haven', 'name': 'moonlight_haven'},
-    {'id': 11, 'title': 'Silver Springs Resort', 'name': 'moonlight_haven'},
-    {'id': 12, 'title': 'Amber Waves Lodge', 'name': 'starlight_inn'},
-    {'id': 13, 'title': 'Moonlight Haven', 'name': 'emerald_bay'},
-    {'id': 14, 'title': 'Silver Springs Resort', 'name': 'starlight_inn'},
-    {'id': 15, 'title': 'Azure Heights Resort', 'name': 'ivory_coast'},
-    {'id': 16, 'title': 'Azure Heights Resort', 'name': 'amber_waves'},
-    {'id': 17, 'title': 'Golden Palm Retreat', 'name': 'blue_horizon'},
-    {'id': 18, 'title': 'Ivory Coast Inn', 'name': 'silver_springs'},
-    {'id': 19, 'title': 'Moonlight Haven', 'name': 'amber_waves'},
-    {'id': 20, 'title': 'Crimson Peak Lodge', 'name': 'moonlight_haven'},
-]
-
-
 @router.get("")
-def get_hotels(
+async def get_hotels(
         pagination: PaginationDep,
         id: int | None = Query(None, description='Hotel ID'),
-        title: str | None = Query(None),
-        name: str | None = Query(None)
+        title: str | None = Query(None)
 ):
-    hotels_ = []
-    for hotel in hotels:
-        if id and hotel['id'] != id:
-            continue
-        if title and hotel['title'] != title:
-            continue
-        if name and hotel['name'] != name:
-            continue
-        hotels_.append(hotel)
+    async with session_maker() as session:
+        query = select(HotelsORM)
+        res = await session.execute(query)
+        hotels = res.scalars().all()
+        # print(hotels)
     if pagination.page and pagination.per_page:
-        return hotels_[(pagination.page-1) * pagination.per_page:(pagination.page-1) * pagination.per_page + pagination.per_page]
-    return hotels_
+        return hotels[(pagination.page-1) * pagination.per_page:(pagination.page-1) * pagination.per_page + pagination.per_page]
+    return hotels
 
 
 @router.post("")
-def create_hotel(hotel_data: Hotel):
-    global hotels
-    hotels.append({
-        "id": hotels[-1]["id"] + 1,
-        "title": hotel_data.title,
-        "name": hotel_data.name,
-    })
+async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
+    "1": {
+        "summary": "NY",
+        "value": {
+            "title": "Grand NY 5 Stars",
+            "location": "New York. 12nd Twice street",
+        }
+    },
+    "2": {
+            "summary": "Amsterdam",
+            "value": {
+                "title": "Rainbow Hotel-Club",
+                "location": "Amsterdam. 12st and mainst",
+            }
+        }
+})):
+    async with session_maker() as session:
+        add_hotel_stmt = insert(HotelsORM).values(**hotel_data.model_dump())
+        # print(add_hotel_stmt.compile(compile_kwargs={"literal_binds": True}))
+        print(add_hotel_stmt.compile(bind=engine, compile_kwargs={"literal_binds": True}))
+        await session.execute(add_hotel_stmt)
+        await session.commit()
     return {"status": "ok"}
 
 
