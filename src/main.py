@@ -1,5 +1,9 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from fastapi import FastAPI
-from hotels import router as hotels_router
+from src.api.hotels import router as hotels_router
 
 
 app = FastAPI(title="Momoa Web API",)
