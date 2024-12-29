@@ -15,16 +15,22 @@ router = APIRouter(prefix="/hotels", tags=["Hotels"])
 @router.get("")
 async def get_hotels(
         pagination: PaginationDep,
-        id: int | None = Query(None, description='Hotel ID'),
-        title: str | None = Query(None)
+        title: str | None = Query(None),
+        location: str | None = Query(None),
 ):
     async with session_maker() as session:
         query = select(HotelsORM)
+        if title:
+            query = query.filter(HotelsORM.title.ilike(f"%{title}%"))
+        if location:
+            query = query.filter(HotelsORM.location.ilike(f"%{location}%"))
+        query = (
+            query
+            .limit(pagination.per_page)
+            .offset(pagination.per_page * (pagination.page - 1))
+        )
         res = await session.execute(query)
         hotels = res.scalars().all()
-        # print(hotels)
-    if pagination.page and pagination.per_page:
-        return hotels[(pagination.page-1) * pagination.per_page:(pagination.page-1) * pagination.per_page + pagination.per_page]
     return hotels
 
 
@@ -61,13 +67,7 @@ def update_hotel(
         hotel_id: int,
         hotel_data: Hotel
 ):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel['id'] == hotel_id:
-        hotel['title'] = hotel_data.title
-        hotel['name'] = hotel_data.name
-        return {"status": "ok"}
-    return {"status": "hotel not found"}
+    pass
 
 
 @router.patch(
@@ -80,17 +80,9 @@ def partially_update_hotel(
         hotel_id: int,
         hotel_data: HotelPATCH
 ):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel_data.title:
-        hotel['title'] = hotel_data.title
-    if hotel_data.name:
-        hotel['name'] = hotel_data.name
-    return {"status": "ok"}
+    pass
 
 
 @router.delete('/{hotel_id}')
 def delete_hotel(hotel_id: int):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel['id'] != hotel_id]
-    return {"status": "ok"}
+    pass
