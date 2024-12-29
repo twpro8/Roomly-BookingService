@@ -1,6 +1,6 @@
 from fastapi import Query, APIRouter, Body
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, func
 
 from src.schemas.hotels import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDep
@@ -8,6 +8,8 @@ from src.database import session_maker
 
 from src.models.hotels import HotelsORM
 from src.database import engine
+
+from repositories.hotels import HotelsRepository
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"])
 
@@ -19,23 +21,15 @@ async def get_hotels(
         location: str | None = Query(None),
 ):
     async with session_maker() as session:
-        query = select(HotelsORM)
-        if title:
-            query = query.filter(HotelsORM.title.ilike(f"%{title}%"))
-        if location:
-            query = query.filter(HotelsORM.location.ilike(f"%{location}%"))
-        query = (
-            query
-            .limit(pagination.per_page)
-            .offset(pagination.per_page * (pagination.page - 1))
-        )
-        res = await session.execute(query)
-        hotels = res.scalars().all()
-    return hotels
+        return await HotelsRepository(session).get_all(
+            location=location,
+            title=title,
+            limit=pagination.per_page,
+            offset=pagination.per_page * (pagination.page - 1))
 
 
 @router.post("")
-async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
+async def add_hotel(hotel_data: Hotel = Body(openapi_examples={
     "1": {
         "summary": "NY",
         "value": {
@@ -47,17 +41,14 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
             "summary": "Amsterdam",
             "value": {
                 "title": "Rainbow Hotel-Club",
-                "location": "Amsterdam. 12st and mainst",
+                "location": "Amsterdam. 12st and mainfield",
             }
         }
 })):
     async with session_maker() as session:
-        add_hotel_stmt = insert(HotelsORM).values(**hotel_data.model_dump())
-        # print(add_hotel_stmt.compile(compile_kwargs={"literal_binds": True}))
-        print(add_hotel_stmt.compile(bind=engine, compile_kwargs={"literal_binds": True}))
-        await session.execute(add_hotel_stmt)
+        hotel = await HotelsRepository(session).add(hotel_data)
         await session.commit()
-    return {"status": "ok"}
+    return {"status": "ok", "data": hotel}
 
 
 @router.put(
