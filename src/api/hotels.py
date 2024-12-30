@@ -8,11 +8,6 @@ from repositories.hotels import HotelsRepository
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"])
 
-@router.get("/{hotel_id}")
-async def get_hotel(hotel_id: int):
-    async with session_maker() as session:
-        hotel = await HotelsRepository(session).get_one_or_none(id=hotel_id)
-        return hotel
 
 @router.get("")
 async def get_hotels(
@@ -27,6 +22,10 @@ async def get_hotels(
             limit=pagination.per_page,
             offset=pagination.per_page * (pagination.page - 1))
 
+@router.get("/{hotel_id}")
+async def get_hotel(hotel_id: int):
+    async with session_maker() as session:
+        return await HotelsRepository(session).get_one_or_none(id=hotel_id)
 
 @router.post("")
 async def add_hotel(hotel_data: Hotel = Body(openapi_examples={
