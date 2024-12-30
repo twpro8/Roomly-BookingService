@@ -1,6 +1,6 @@
-from fastapi import Query, APIRouter, Body
+from fastapi import Query, APIRouter, Body, HTTPException
 
-from sqlalchemy import insert, select, func
+from sqlalchemy import insert, select, func, update, delete
 
 from src.schemas.hotels import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDep
@@ -54,11 +54,14 @@ async def add_hotel(hotel_data: Hotel = Body(openapi_examples={
 @router.put(
     "/{hotel_id}",
     summary="Edit The Entire Hotel")
-def update_hotel(
+async def edit_hotel(
         hotel_id: int,
         hotel_data: Hotel
 ):
-    pass
+    async with session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, id=hotel_id)
+        await session.commit()
+        return {"status": "ok"}
 
 
 @router.patch(
@@ -75,5 +78,8 @@ def partially_update_hotel(
 
 
 @router.delete('/{hotel_id}')
-def delete_hotel(hotel_id: int):
-    pass
+async def delete_hotel(hotel_id: int):
+    async with session_maker() as session:
+        await HotelsRepository(session).delete(hotel_id)
+        await session.commit()
+        return {"status": "ok"}
