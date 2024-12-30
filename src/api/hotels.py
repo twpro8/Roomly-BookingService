@@ -1,18 +1,18 @@
-from fastapi import Query, APIRouter, Body, HTTPException
-
-from sqlalchemy import insert, select, func, update, delete
+from fastapi import Query, APIRouter, Body
 
 from src.schemas.hotels import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDep
 from src.database import session_maker
 
-from src.models.hotels import HotelsORM
-from src.database import engine
-
 from repositories.hotels import HotelsRepository
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"])
 
+@router.get("/{hotel_id}")
+async def get_hotel(hotel_id: int):
+    async with session_maker() as session:
+        hotel = await HotelsRepository(session).get_one_or_none(id=hotel_id)
+        return hotel
 
 @router.get("")
 async def get_hotels(
@@ -70,16 +70,19 @@ async def edit_hotel(
     description="""
     <h3>Description</h3>
     You can edit several or all attributes of the hotel.""")
-def partially_update_hotel(
+async def partially_update_hotel(
         hotel_id: int,
         hotel_data: HotelPATCH
 ):
-    pass
+    async with session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await session.commit()
+        return {"status": "ok"}
 
 
 @router.delete('/{hotel_id}')
 async def delete_hotel(hotel_id: int):
     async with session_maker() as session:
-        await HotelsRepository(session).delete(hotel_id)
+        await HotelsRepository(session).delete(id=hotel_id)
         await session.commit()
         return {"status": "ok"}
