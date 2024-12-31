@@ -3,10 +3,12 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI
+
+from src.api.auth import router as auth_router
 from src.api.hotels import router as hotels_router
 
-
-app = FastAPI(title="Momoa Web API",)
+app = FastAPI(title="Momoa Web API")
+app.include_router(auth_router)
 app.include_router(hotels_router)
 
 
