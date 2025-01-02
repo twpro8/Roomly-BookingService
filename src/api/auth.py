@@ -1,4 +1,3 @@
-from debugpy.adapter import access_token
 from fastapi import APIRouter, HTTPException, Response, Request
 
 from sqlalchemy.exc import IntegrityError
