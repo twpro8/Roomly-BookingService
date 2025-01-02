@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Response
+from debugpy.adapter import access_token
+from fastapi import APIRouter, HTTPException, Response, Request
 
 from sqlalchemy.exc import IntegrityError
 
@@ -45,3 +46,9 @@ async def login_user(
         response.set_cookie("access_token", access_token, httponly=True)
 
         return {"status": "ok", "access_token": access_token}
+
+@router.post("/protected_route")
+async def protected_route(
+        request: Request,
+):
+    access_token = request.cookies.get("access_token") or None # cookie method returns a dict of str cookies
