@@ -17,3 +17,10 @@ class AddUser(BaseModel):
     username: str
     email: EmailStr
     hashed_password: str
+
+class UserWithHashedPassword(User):
+    hashed_password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
