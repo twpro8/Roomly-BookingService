@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Response, Request
+from fastapi import APIRouter, HTTPException, Response
 
 from sqlalchemy.exc import IntegrityError
 
+from src.api.dependencies import UserIdDep
 from src.repositories.users import UsersRepository
 from src.schemas.users import UserRequestAdd, AddUser, UserLogin
 from src.database import session_maker
@@ -46,8 +47,10 @@ async def login_user(
 
         return {"status": "ok", "access_token": access_token}
 
-@router.post("/protected_route")
-async def protected_route(
-        request: Request,
+@router.get("/profile")
+async def get_profile(
+        user_id: UserIdDep
 ):
-    access_token = request.cookies.get("access_token") or None # cookie method returns a dict of str cookies
+    async with session_maker() as session:
+        user = await UsersRepository(session).get_one_or_none(id=user_id)
+        return user
