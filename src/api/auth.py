@@ -55,7 +55,7 @@ async def get_profile(
         user = await UsersRepository(session).get_one_or_none(id=user_id)
         return user
 
-@router.get("/logout")
+@router.post("/logout")
 async def logout(
         response: Response
 ):
