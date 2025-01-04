@@ -10,14 +10,14 @@ class RoomAddRequest(BaseModel):
 class RoomAdd(RoomAddRequest):
     hotel_id: int
 
-class RoomPut(RoomAddRequest):
-    pass
-
-class RoomPatch(BaseModel):
+class RoomPatchRequest(BaseModel):
     title: str | None = None
     description: str | None = None
     price: int | None = None
     quantity: int | None = None
+
+class RoomPatch(RoomPatchRequest):
+    hotel_id: int
 
 class Room(RoomAdd):
     id: int
