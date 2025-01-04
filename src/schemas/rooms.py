@@ -8,7 +8,7 @@ class RoomPut(BaseModel):
     quantity: int
 
 class RoomAdd(RoomPut):
-    id_hotel: int
+    hotel_id: int
 
 class RoomPATCH(BaseModel):
     title: str | None = Field(None)

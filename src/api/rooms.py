@@ -24,7 +24,7 @@ async def add_room(room_data: RoomAdd = Body(openapi_examples={
     "1": {
         "summary": "Ex1",
         "value": {
-            "id_hotel": 48,
+            "hotel_id": 48,
             "title": "No V.I.P.",
             "description": "For best people",
             "price": 1200,
@@ -34,7 +34,7 @@ async def add_room(room_data: RoomAdd = Body(openapi_examples={
     "2": {
         "summary": "Ex2",
         "value": {
-            "id_hotel": 48,
+            "hotel_id": 48,
             "title": "V.I.P.",
             "price": 1200,
             "quantity": 4

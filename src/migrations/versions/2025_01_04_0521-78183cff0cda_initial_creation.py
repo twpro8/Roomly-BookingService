@@ -1,8 +1,8 @@
-"""add hotels and rooms
+"""Initial creation
 
-Revision ID: ce6e2c2692ec
+Revision ID: 78183cff0cda
 Revises: 
-Create Date: 2024-12-28 20:23:13.928021
+Create Date: 2025-01-04 05:21:07.397572
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "ce6e2c2692ec"
+revision: str = "78183cff0cda"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,15 +28,26 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
+        "users",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("username", sa.String(), nullable=False),
+        sa.Column("hashed_password", sa.String(length=200), nullable=False),
+        sa.Column("email", sa.String(length=50), nullable=False),
+        sa.Column("bio", sa.String(length=100), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("email"),
+        sa.UniqueConstraint("username"),
+    )
+    op.create_table(
         "rooms",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("id_hotel", sa.Integer(), nullable=False),
+        sa.Column("hotel_id", sa.Integer(), nullable=False),
         sa.Column("title", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
         sa.Column("price", sa.Integer(), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["id_hotel"],
+            ["hotel_id"],
             ["hotels.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
@@ -45,4 +56,5 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("rooms")
+    op.drop_table("users")
     op.drop_table("hotels")
