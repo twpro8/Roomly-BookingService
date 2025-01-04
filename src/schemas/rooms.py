@@ -1,20 +1,23 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class RoomPut(BaseModel):
+class RoomAddRequest(BaseModel):
     title: str
-    description: str | None = Field(None)
+    description: str | None = None
     price: int
     quantity: int
 
-class RoomAdd(RoomPut):
+class RoomAdd(RoomAddRequest):
     hotel_id: int
 
-class RoomPATCH(BaseModel):
-    title: str | None = Field(None)
-    description: str | None = Field(None)
-    price: int | None = Field(None)
-    quantity: int | None = Field(None)
+class RoomPut(RoomAddRequest):
+    pass
+
+class RoomPatch(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    price: int | None = None
+    quantity: int | None = None
 
 class Room(RoomAdd):
     id: int

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body
 
-from src.schemas.rooms import RoomAdd, RoomPATCH, RoomPut
+from src.schemas.rooms import RoomAdd, RoomPatch, RoomPut, RoomAddRequest
 from src.database import session_maker
 
 from src.repositories.rooms import RoomsRepository
@@ -67,7 +67,7 @@ async def edit_room(
             You can edit several or all the attributes of the room""")
 async def partially_edit_room(
         room_id: int,
-        room_data: RoomPATCH
+        room_data: RoomPatch
 ):
     async with session_maker() as session:
         await RoomsRepository(session).edit(room_data, exclude_unset=True, id=room_id)
