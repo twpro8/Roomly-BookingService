@@ -8,6 +8,7 @@ from src.services.auth import AuthService
 
 from src.api.dependencies import DBDep
 
+
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
@@ -31,6 +32,7 @@ async def register_user(
 
     return {"status": "ok"}
 
+
 @router.post("/login")
 async def login_user(
         db: DBDep,
@@ -47,13 +49,15 @@ async def login_user(
 
     return {"status": "ok", "access_token": access_token}
 
+
 @router.get("/profile")
-async def get_profile(
+async def get_me(
         db: DBDep,
         user_id: UserIdDep
 ):
     user = await db.users.get_one_or_none(id=user_id)
     return user
+
 
 @router.post("/logout")
 async def logout(
@@ -61,3 +65,4 @@ async def logout(
 ):
     response.delete_cookie("access_token")
     return {"status": "ok"}
+
