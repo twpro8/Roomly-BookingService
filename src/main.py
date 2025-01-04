@@ -6,11 +6,13 @@ from fastapi import FastAPI
 
 from src.api.auth import router as auth_router
 from src.api.hotels import router as hotels_router
+from src.api.rooms import router as rooms_router
+
 
 app = FastAPI(title="Momoa Web API")
 app.include_router(auth_router)
 app.include_router(hotels_router)
-
+app.include_router(rooms_router)
 
 if __name__ == "__main__":
     import uvicorn

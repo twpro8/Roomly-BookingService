@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from sqlalchemy import insert, select, update, delete
 from pydantic import BaseModel
 
@@ -39,12 +38,8 @@ class BaseRepository:
             update(self.model)
             .values(**data.model_dump(exclude_unset=exclude_unset))
             .filter_by(**filter_by))
-        res = await self.session.execute(stmt)
-        if res.rowcount != 1:
-            raise HTTPException(status_code=404, detail="Hotel not found")
+        await self.session.execute(stmt)
 
     async def delete(self, **filter_by) -> None:
         stmt = delete(self.model).filter_by(**filter_by)
-        res = await self.session.execute(stmt)
-        if res.rowcount != 1:
-            raise HTTPException(status_code=404, detail="Hotel not found")
+        await self.session.execute(stmt)
