@@ -2,6 +2,7 @@ from datetime import date
 
 from sqlalchemy import select, func
 
+from src.database import engine
 from src.repositories.base import BaseRepository
 from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
@@ -22,7 +23,7 @@ class HotelsRepository(BaseRepository):
             title,
             limit,
             offset
-    ):
+    ) -> list[Hotel]:
         rooms_ids_to_get = rooms_ids_for_booking(date_from=date_from, date_to=date_to)
 
         get_hotel_ids = (
@@ -35,10 +36,7 @@ class HotelsRepository(BaseRepository):
             .filter(RoomsORM.id.in_(rooms_ids_to_get))
         )
 
-        query = (
-            select(HotelsORM).select_from(HotelsORM)
-        )
-
+        query = select(HotelsORM).filter(HotelsORM.id.in_(get_hotel_ids))
         if title:
             query = (
                 query
@@ -50,13 +48,12 @@ class HotelsRepository(BaseRepository):
                 query
                 .filter(func.lower(HotelsORM.location)
                 .contains(location.strip().lower())))
-
         query = (
             query
-            .filter(HotelsORM.id.in_(get_hotel_ids))
             .limit(limit)
             .offset(offset)
         )
+        print(query.compile(bind=engine, compile_kwargs={"literal_binds": True}))
         res = await self.session.execute(query)
 
         return [self.schema.model_validate(model, from_attributes=True) for model in res.scalars().all()]
