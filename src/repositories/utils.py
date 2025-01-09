@@ -28,20 +28,24 @@ def rooms_ids_for_booking(
         .cte(name="rooms_left")
     )
 
-    rooms_ids_for_hotel = select(RoomsORM.id).select_from(RoomsORM)
+    rooms_ids_for_hotel = (
+        select(RoomsORM.id)
+        .select_from(RoomsORM)
+    )
     if hotel_id is not None:
         rooms_ids_for_hotel = rooms_ids_for_hotel.filter_by(hotel_id=hotel_id)
-    rooms_ids_for_hotel =  rooms_ids_for_hotel.subquery(name="rooms_ids_for_hotel")
+    rooms_ids_for_hotel = (
+        rooms_ids_for_hotel
+        .subquery(name="rooms_ids_for_hotel")
+    )
 
     get_rooms_ids = (
         select(rooms_left.c.room_id)
         .select_from(rooms_left)
         .filter(
             rooms_left.c.rooms_left > 0,
-            rooms_left.c.room_id.in_(rooms_ids_for_hotel)
+            rooms_left.c.room_id.in_(rooms_ids_for_hotel.select()),
         )
     )
-    # print(get_rooms_ids.compile(bind=engine, compile_kwargs={'literal_binds': True}))
-
     return get_rooms_ids
 
