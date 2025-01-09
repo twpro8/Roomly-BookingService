@@ -2,6 +2,7 @@ from datetime import date
 
 from fastapi import APIRouter, Body, Query
 
+from src.schemas.facilities import RoomFacilityAdd
 from src.schemas.rooms import RoomAdd, RoomPatch, RoomAddRequest, RoomPatchRequest
 from src.api.dependencies import DBDep
 
@@ -24,30 +25,16 @@ async def get_room_by_id(db: DBDep, hotel_id: int, room_id: int):
     return await db.rooms.get_one_or_none(id=room_id, hotel_id=hotel_id)
 
 
-@router.post("/{hotel_id}/rooms/")
-async def add_room(db: DBDep, hotel_id: int, room_data: RoomAddRequest = Body(openapi_examples={
-    "1": {
-        "summary": "Ex1",
-        "value": {
-            "title": "No V.I.P.",
-            "description": "For best people",
-            "price": 1200,
-            "quantity": 4
-        }
-    },
-    "2": {
-        "summary": "Ex2",
-        "value": {
-            "title": "V.I.P.",
-            "price": 1200,
-            "quantity": 4
-        }
-    }
-})):
+@router.post("/{hotel_id}/rooms")
+async def create_room(hotel_id: int, db: DBDep, room_data: RoomAddRequest = Body()):
     _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
     room = await db.rooms.add(_room_data)
+
+    rooms_facilities_data = [RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in room_data.facilities_ids]
+    await db.rooms_facilities.add_bulk(rooms_facilities_data)
     await db.commit()
-    return {"status": "ok", "data": room}
+
+    return {"status": "OK", "data": room}
 
 
 @router.put("/{hotel_id}/rooms/{room_id}",
