@@ -1,9 +1,6 @@
-from sqlalchemy import insert
-from pydantic import BaseModel
-
 from src.repositories.base import BaseRepository
-from src.models.bookings import BookingsORM
 from src.schemas.bookings import Booking
+from src.models.bookings import BookingsORM
 
 
 class BookingsRepository(BaseRepository):

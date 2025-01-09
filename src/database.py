@@ -6,7 +6,7 @@ from src.config import settings
 
 engine = create_async_engine(
     url=settings.DB_URL,
-    echo=True
+    # echo=True
 )
 
 session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
