@@ -2,7 +2,6 @@ from datetime import date
 
 from sqlalchemy import select, func
 
-from src.database import engine
 from src.repositories.base import BaseRepository
 from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
@@ -22,39 +21,27 @@ class HotelsRepository(BaseRepository):
             location,
             title,
             limit,
-            offset
+            offset,
     ) -> list[Hotel]:
         rooms_ids_to_get = rooms_ids_for_booking(date_from=date_from, date_to=date_to)
-
-        get_hotel_ids = (
+        hotels_ids_to_get = (
             select(RoomsORM.hotel_id)
             .select_from(RoomsORM)
-        )
-
-        get_hotel_ids = (
-            get_hotel_ids
             .filter(RoomsORM.id.in_(rooms_ids_to_get))
         )
-
-        query = select(HotelsORM).filter(HotelsORM.id.in_(get_hotel_ids))
-        if title:
-            query = (
-                query
-                .filter(func.lower(HotelsORM.title)
-                .contains(title.strip().lower()))
-            )
+        query = select(HotelsORM).filter(HotelsORM.id.in_(hotels_ids_to_get))
         if location:
-            query = (
-                query
-                .filter(func.lower(HotelsORM.location)
-                .contains(location.strip().lower())))
+            query = query.filter(func.lower(HotelsORM.location).contains(location.strip().lower()))
+        if title:
+            query = query.filter(func.lower(HotelsORM.title).contains(title.strip().lower()))
         query = (
             query
+            .order_by(HotelsORM.id)
             .limit(limit)
             .offset(offset)
         )
-        print(query.compile(bind=engine, compile_kwargs={"literal_binds": True}))
+        # print(query.compile(bind=engine, compile_kwargs={"literal_binds": True}))
         res = await self.session.execute(query)
 
-        return [self.schema.model_validate(model, from_attributes=True) for model in res.scalars().all()]
+        return [Hotel.model_validate(hotel, from_attributes=True) for hotel in res.scalars().all()]
 
