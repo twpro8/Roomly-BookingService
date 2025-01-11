@@ -24,8 +24,8 @@ class RoomsFacilitiesRepository(BaseRepository):
         existed_f_ids = set(res.scalars().all())
         new_f_ids = set(facilities_ids)
 
-        to_add = new_f_ids - existed_f_ids
-        to_delete = existed_f_ids - new_f_ids
+        to_add: set[int] = new_f_ids - existed_f_ids
+        to_delete: set[int] = existed_f_ids - new_f_ids
 
         if to_delete:
             delete_query = (
