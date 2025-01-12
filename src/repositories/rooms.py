@@ -30,7 +30,7 @@ class RoomsRepository(BaseRepository):
         res = await self.session.execute(query)
         return [RoomWithRels.model_validate(model, from_attributes=True) for model in res.scalars().all()]
 
-    async def get_one_or_none(self, **filter_by):
+    async def get_one_or_none_with_rels(self, **filter_by):
         query = (
             select(self.model)
             .options(selectinload(RoomsORM.facilities))
