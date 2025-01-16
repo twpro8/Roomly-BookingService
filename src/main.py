@@ -5,6 +5,9 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI
 
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+
 from src import redis_manager
 from src.api.auth import router as auth_router
 from src.api.hotels import router as hotels_router
@@ -16,6 +19,7 @@ from src.api.facilities import router as facilities_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await redis_manager.connect()
+    FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
     yield
     await redis_manager.close()
 
