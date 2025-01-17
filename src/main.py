@@ -1,4 +1,3 @@
-import asyncio
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -18,20 +17,8 @@ from src.api.facilities import router as facilities_router
 from src.api.images import router as images_router
 
 
-from src.api.dependencies import get_db
-async def send_emails_regularly():
-    async for db in get_db():
-        res = await db.bookings.get_checkin_day()
-        return print("GOT OT", f"{res=}")
-async def run_send_emails_regularly():
-    while True:
-        await send_emails_regularly()
-        await asyncio.sleep(5)
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    asyncio.create_task(run_send_emails_regularly())
     await redis_manager.connect()
     FastAPICache.init(RedisBackend(redis_manager.redis), prefix="fastapi-cache")
     yield
