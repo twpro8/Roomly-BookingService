@@ -1,8 +1,7 @@
 from datetime import date
 
 from fastapi import Query, APIRouter, Body
-# from fastapi_cache.decorator import cache
-from src.api.services import cache # test my cache
+from fastapi_cache.decorator import cache
 
 from src.schemas.hotels import HotelPATCH, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
