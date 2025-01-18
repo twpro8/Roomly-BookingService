@@ -1,4 +1,8 @@
+import time
+
 import pytest
+import aiofiles
+import json
 
 from httpx import AsyncClient, ASGITransport
 
@@ -31,3 +35,34 @@ async def register_user(setup_database):
                 "password": "password_<PASSWORD>",
             }
         )
+
+
+async def read_json(file_name: str) -> dict:
+    path = f"tests/{file_name}.json"
+    async with (aiofiles.open(path, "rt") as fin):
+            res = await fin.read()
+            return json.loads(res)
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def add_hotels(setup_database):
+    hotels_to_add = await read_json("mock_hotels")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        for hotel in hotels_to_add:
+            await client.post("/hotels", json=hotel)
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def add_facilities(setup_database):
+    facilities_to_add = await read_json("mock_facilities")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        for facility in facilities_to_add:
+            await client.post("/facilities", json=facility)
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def add_rooms(add_hotels, add_facilities):
+    rooms_to_add = await read_json("mock_rooms")
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        for room in rooms_to_add:
+            await client.post(f"/hotels/{room.get('hotel_id')}/rooms", json=room)
