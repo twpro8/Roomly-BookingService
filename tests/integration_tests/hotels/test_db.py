@@ -1,10 +1,7 @@
 from src.schemas.hotels import HotelAdd
-from src.utils.db_manager import DBManager
-from src.database import null_pool_session_maker
 
 
-async def test_add_hotel():
+async def test_add_hotel(db):
     hotel_data = HotelAdd(title="Pride", location="Amsterdam")
-    async with DBManager(session_factory=null_pool_session_maker) as db:
-        await db.hotels.add(hotel_data)
-        await db.commit()
+    await db.hotels.add(hotel_data)
+    await db.commit()
