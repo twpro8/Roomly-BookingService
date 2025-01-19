@@ -66,3 +66,9 @@ async def create_booking(
     await db.commit()
     return {"status": "ok", "data": booking}
 
+
+@router.delete("{booking_id}")
+async def delete_booking(db: DBDep, booking_id: int):
+    await db.bookings.delete(id=booking_id)
+    await db.commit()
+    return {"status": "ok"}
