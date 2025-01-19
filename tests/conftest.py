@@ -70,7 +70,7 @@ async def register_user(setup_database, ac):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 async def authed_ac(register_user, ac):
     res = await ac.post(
         "/users/login",
