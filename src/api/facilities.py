@@ -22,4 +22,4 @@ async def add_facility(
     res = await db.facilities.add(facility)
     await db.commit()
 
-    return {"status": "ok", "facility": res}
+    return {"status": "ok", "data": res}
