@@ -70,6 +70,20 @@ async def register_user(setup_database, ac):
     )
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def authed_ac(register_user, ac):
+    res = await ac.post(
+        "/users/login",
+        json={
+            "username": "tester1",
+            "password": "password_<PASSWORD>"
+        }
+    )
+    assert res.status_code == 200
+    assert ac.cookies["access_token"]
+    yield ac
+
+
 def read_json(file_name: str) -> dict:
     path = f"tests/{file_name}.json"
     with open(path, encoding="utf-8") as fin:
