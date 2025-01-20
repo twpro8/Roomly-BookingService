@@ -64,8 +64,8 @@ async def register_user(setup_database, ac):
         "/users/register",
         json={
             "username": "tester1",
-            "email": "kot@pes.com",
-            "password": "password_<PASSWORD>",
+            "email": "imagination@no.com",
+            "password": "hard_password",
         }
     )
 
@@ -76,7 +76,7 @@ async def authed_ac(register_user, ac):
         "/users/login",
         json={
             "username": "tester1",
-            "password": "password_<PASSWORD>"
+            "password": "hard_password",
         }
     )
     assert res.status_code == 200
@@ -86,5 +86,5 @@ async def authed_ac(register_user, ac):
 
 def read_json(file_name: str) -> dict:
     path = f"tests/{file_name}.json"
-    with open(path, encoding="utf-8") as fin:
-        return json.load(fin)
+    with open(path, encoding="utf-8") as file_in:
+        return json.load(file_in)

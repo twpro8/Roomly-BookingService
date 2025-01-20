@@ -19,12 +19,12 @@ class RoomsRepository(BaseRepository):
             date_from: date,
             date_to: date
     ):
-        get_rooms_ids = rooms_ids_for_booking(hotel_id=hotel_id, date_from=date_from, date_to=date_to)
+        rooms_ids_to_get = rooms_ids_for_booking(hotel_id=hotel_id, date_from=date_from, date_to=date_to)
 
         query = (
             select(self.model)
             .options(selectinload(RoomsORM.facilities))
-            .filter(RoomsORM.id.in_(get_rooms_ids))
+            .filter(RoomsORM.id.in_(rooms_ids_to_get))
         )
         res = await self.session.execute(query)
         return [RoomWithRelsDataMapper.map_to_domain_entity(model) for model in res.scalars().all()]
