@@ -24,9 +24,9 @@ async def register_user(
     except IntegrityError as e:
         await db.rollback()
         if "username" in str(e.orig):
-            raise HTTPException(status_code=400, detail="Username already exists")
+            raise HTTPException(status_code=401, detail="Username already exists")
         if "email" in str(e.orig):
-            raise HTTPException(status_code=400, detail="Email already exists")
+            raise HTTPException(status_code=401, detail="Email already exists")
 
     await db.commit()
 
