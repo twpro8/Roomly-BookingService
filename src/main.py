@@ -1,6 +1,7 @@
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from fastapi import FastAPI
@@ -36,4 +37,5 @@ app.include_router(images_router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", reload=True) # you can add workers but reload must be false
+
+    uvicorn.run("main:app", reload=True)  # you can add workers but reload must be false

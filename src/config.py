@@ -23,10 +23,13 @@ class Settings(BaseSettings):
     def DB_URL(self):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
-    model_config = SettingsConfigDict(env_file=".env") # pydantic reads this file by default so it can be omitted
+    model_config = SettingsConfigDict(
+        env_file=".env"
+    )  # pydantic reads this file by default so it can be omitted
 
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+
 
 settings = Settings()

@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, EmailStr
 
 
@@ -8,18 +7,22 @@ class User(BaseModel):
     email: EmailStr
     bio: str | None
 
+
 class UserRequestAdd(BaseModel):
     username: str
     email: EmailStr
     password: str
+
 
 class AddUser(BaseModel):
     username: str
     email: EmailStr
     hashed_password: str
 
+
 class UserWithHashedPassword(User):
     hashed_password: str
+
 
 class UserLogin(BaseModel):
     username: str

@@ -1,8 +1,10 @@
-#ruff: noqa: E402
+# ruff: noqa: E402
 import pytest
 from unittest import mock
 
-mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func).start()
+mock.patch(
+    "fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func
+).start()
 
 
 import json
@@ -12,7 +14,7 @@ from httpx import AsyncClient, ASGITransport
 from src import settings
 from src.api.dependencies import get_db
 from src.database import Base, null_pool_engine, null_pool_session_maker
-from src.models import * # noqa
+from src.models import *  # noqa
 from src.schemas.hotels import HotelAdd
 from src.schemas.rooms import RoomAdd
 from src.utils.db_manager import DBManager
@@ -55,7 +57,9 @@ async def setup_database(check_test_mode):
 
 @pytest.fixture(scope="session")
 async def ac() -> AsyncClient:
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
 
 
@@ -67,7 +71,7 @@ async def register_user(setup_database, ac):
             "username": "tester1",
             "email": "imagination@no.com",
             "password": "hard_password",
-        }
+        },
     )
 
 
@@ -78,7 +82,7 @@ async def authed_ac(register_user, ac):
         json={
             "username": "tester1",
             "password": "hard_password",
-        }
+        },
     )
     assert res.status_code == 200
     assert ac.cookies["access_token"]

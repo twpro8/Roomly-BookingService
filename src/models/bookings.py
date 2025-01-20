@@ -8,7 +8,7 @@ from src.database import Base
 
 
 class BookingsORM(Base):
-    __tablename__ = 'bookings'
+    __tablename__ = "bookings"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     room_id: Mapped[int] = mapped_column(ForeignKey("rooms.id", ondelete="CASCADE"))
@@ -20,4 +20,3 @@ class BookingsORM(Base):
     @hybrid_property
     def total_cost(self) -> int:
         return self.price * (self.date_to - self.date_from).days
-

@@ -13,12 +13,11 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/register")
-async def register_user(
-        db: DBDep,
-        data: UserRequestAdd
-):
+async def register_user(db: DBDep, data: UserRequestAdd):
     hashed_password = AuthService().hash_password(data.password)
-    new_user_data = AddUser(username=data.username, email=data.email, hashed_password=hashed_password)
+    new_user_data = AddUser(
+        username=data.username, email=data.email, hashed_password=hashed_password
+    )
     try:
         await db.users.add(new_user_data)
     except IntegrityError as e:
@@ -34,11 +33,7 @@ async def register_user(
 
 
 @router.post("/login")
-async def login_user(
-        db: DBDep,
-        data: UserLogin,
-        response: Response
-):
+async def login_user(db: DBDep, data: UserLogin, response: Response):
     user = await db.users.get_user_with_hashed_password(username=data.username)
     if not user:
         raise HTTPException(status_code=401, detail="User does not exist")
@@ -51,18 +46,12 @@ async def login_user(
 
 
 @router.get("/profile")
-async def get_me(
-        db: DBDep,
-        user_id: UserIdDep
-):
+async def get_me(db: DBDep, user_id: UserIdDep):
     user = await db.users.get_one_or_none(id=user_id)
     return user
 
 
 @router.post("/logout")
-async def logout(
-        response: Response
-):
+async def logout(response: Response):
     response.delete_cookie("access_token")
     return {"status": "ok"}
-

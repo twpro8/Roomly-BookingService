@@ -1,7 +1,7 @@
 """Initial creation
 
 Revision ID: 78183cff0cda
-Revises: 
+Revises:
 Create Date: 2025-01-04 05:21:07.397572
 
 """

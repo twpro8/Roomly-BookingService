@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from  fastapi import Depends, Query, HTTPException, Request
+from fastapi import Depends, Query, HTTPException, Request
 from pydantic import BaseModel
 from src.database import session_maker
 
@@ -17,7 +17,9 @@ PaginationDep = Annotated[PaginationParams, Depends()]
 
 
 def get_token(request: Request) -> str:
-    token = request.cookies.get("access_token", None)  # cookie method returns a dict of str cookies
+    token = request.cookies.get(
+        "access_token", None
+    )  # cookie method returns a dict of str cookies
     if not token:
         raise HTTPException(status_code=401, detail="No token")
     return token

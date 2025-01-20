@@ -2,21 +2,24 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.parametrize("username, email, password, status_code", [
-    ("Cat Tester", "tester_cat@gmail.com", "love_chicken", 200),
-    ("Car Yugo", "yugish@gmail.com", "not_reliable", 200),
-    ("Pythons", "pypy@gmail.com", "cute_programming", 200),
-    ("Carrot", "pypy@gmail.com", "strong_password", 401),        # has the same email
-    ("Pythons", "watermelon@gmail.com", "tasty_and_juicy", 401), # has the same username
-])
+@pytest.mark.parametrize(
+    "username, email, password, status_code",
+    [
+        ("Cat Tester", "tester_cat@gmail.com", "love_chicken", 200),
+        ("Car Yugo", "yugish@gmail.com", "not_reliable", 200),
+        ("Pythons", "pypy@gmail.com", "cute_programming", 200),
+        ("Carrot", "pypy@gmail.com", "strong_password", 401),  # has the same email
+        (
+            "Pythons",
+            "watermelon@gmail.com",
+            "tasty_and_juicy",
+            401,
+        ),  # has the same username
+    ],
+)
 async def test_auth_users(
-        username: str,
-        email: str,
-        password: str,
-        status_code: int,
-        ac: AsyncClient
+    username: str, email: str, password: str, status_code: int, ac: AsyncClient
 ):
-
     # Register user
     response = await ac.post(
         "/users/register",
@@ -24,7 +27,7 @@ async def test_auth_users(
             "username": username,
             "email": email,
             "password": password,
-        }
+        },
     )
     if status_code == 200:
         assert response.status_code == status_code
@@ -37,7 +40,7 @@ async def test_auth_users(
             json={
                 "username": username,
                 "password": password,
-            }
+            },
         )
         assert response.status_code == status_code
         assert isinstance(response.json(), dict)
@@ -76,7 +79,7 @@ async def test_auth_users(
             json={
                 "username": username,
                 "password": password,
-            }
+            },
         )
         assert response.status_code == status_code
         assert isinstance(response.json(), dict)
