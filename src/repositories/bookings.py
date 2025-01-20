@@ -1,6 +1,7 @@
 from datetime import date
 
 from sqlalchemy import select
+from starlette.exceptions import HTTPException
 
 from src.repositories.base import BaseRepository
 from src.repositories.mappers.mappers import BookingDataMapper
@@ -28,10 +29,10 @@ class BookingsRepository(BaseRepository):
             date_to=data.date_to
         )
         res = await self.session.execute(rooms_ids_to_get)
-        rooms_ids_to_book = res.scalars().all()
+        rooms_ids_to_book: list[int] = res.scalars().all()
 
         if data.room_id in rooms_ids_to_book:
             booking = await self.add(data)
-            return BookingDataMapper.map_to_domain_entity(booking)
+            return booking
         else:
-            raise Exception("There is no rooms left")
+            raise HTTPException(status_code=500, detail="There is no rooms left")
