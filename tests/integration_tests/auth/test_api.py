@@ -1,4 +1,5 @@
 import pytest
+from httpx import AsyncClient
 
 
 @pytest.mark.parametrize("username, email, password, status_code", [
@@ -9,11 +10,11 @@ import pytest
     ("Pythons", "watermelon@gmail.com", "tasty_and_juicy", 401), # has the same username
 ])
 async def test_auth_users(
-        username,
-        email,
-        password,
-        status_code,
-        ac
+        username: str,
+        email: str,
+        password: str,
+        status_code: int,
+        ac: AsyncClient
 ):
 
     # Register user
@@ -46,9 +47,13 @@ async def test_auth_users(
         # Get current user
         response = await ac.get("/users/profile")
         assert response.status_code == status_code
-        assert isinstance(response.json(), dict)
-        assert response.json()["username"] == username
-        assert response.json()["email"] == email
+        user = response.json()
+        assert isinstance(user, dict)
+        assert user["username"] == username
+        assert user["email"] == email
+        assert "id" in user.keys()
+        assert "password" not in user
+        assert "hashed_password" not in user
 
         # Log out user
         response = await ac.post("/users/logout")

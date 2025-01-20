@@ -7,7 +7,7 @@ from alembic import context
 
 from src.config import settings
 from src.database import Base
-from src.models import * # metadata
+from src.models import * # noqa: F403
 
 
 # this is the Alembic Config object, which provides
