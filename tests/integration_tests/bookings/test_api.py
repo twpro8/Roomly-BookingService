@@ -36,7 +36,7 @@ async def test_add_booking(
         assert "data" in res
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 async def delete_all_bookings():
     """Function recreates bookings table"""
     async with null_pool_engine.begin() as conn:
@@ -44,14 +44,18 @@ async def delete_all_bookings():
         await conn.run_sync(BookingsORM.__table__.create)
 
 
-@pytest.mark.parametrize("case, room_id, date_from, date_to, status_code", [
-    (1, 1, "2025-09-01", "2025-09-05", 200),
-    (2, 1, "2025-09-10", "2025-09-15", 200),
-    (3, 1, "2025-09-20", "2025-09-25", 200)
+@pytest.mark.parametrize("room_id, date_from, date_to, case", [
+    (1, "2025-09-01", "2025-09-05", 1),
+    (1, "2025-09-10", "2025-09-15", 2),
+    (1, "2025-09-20", "2025-09-25", 3)
 ])
 async def test_add_and_get_my_bookings(
-        case, room_id, date_from, date_to, status_code,
-        delete_all_bookings, authed_ac
+        case,
+        room_id,
+        date_from,
+        date_to,
+        delete_all_bookings,
+        authed_ac
 ):
     # Add a booking
     response = await authed_ac.post(
@@ -66,8 +70,8 @@ async def test_add_and_get_my_bookings(
     # Get my bookings
     result = await authed_ac.get("/bookings/me")
 
-    assert response.status_code == status_code
-    assert result.status_code == status_code
+    assert response.status_code == 200
+    assert result.status_code == 200
     assert isinstance(response.json(), dict)
     assert isinstance(result.json(), list)
     assert len(result.json()) == case
