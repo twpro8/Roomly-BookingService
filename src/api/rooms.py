@@ -33,8 +33,7 @@ async def create_room(hotel_id: int, db: DBDep, room_data: RoomAddRequest = Body
     room = await db.rooms.add(_room_data)
 
     rooms_facilities_data = [
-        RoomFacilityAdd(room_id=room.id, facility_id=f_id)
-        for f_id in room_data.facilities_ids
+        RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in room_data.facilities_ids
     ]
     await db.rooms_facilities.add_bulk(rooms_facilities_data)
     await db.commit()
@@ -66,9 +65,7 @@ async def edit_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomAddRe
             <h3>Description</h3>
             You can edit several or all the attributes of the room""",
 )
-async def partially_edit_room(
-    db: DBDep, hotel_id: int, room_id: int, room_data: RoomPatchRequest
-):
+async def partially_edit_room(db: DBDep, hotel_id: int, room_id: int, room_data: RoomPatchRequest):
     _model_dump = room_data.model_dump(exclude_unset=True)
     _room_data = RoomPatch(hotel_id=hotel_id, **_model_dump)
     await db.rooms.edit(_room_data, exclude_unset=True, id=room_id, hotel_id=hotel_id)

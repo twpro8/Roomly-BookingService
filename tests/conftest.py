@@ -2,9 +2,7 @@
 import pytest
 from unittest import mock
 
-mock.patch(
-    "fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func
-).start()
+mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func).start()
 
 
 import json
@@ -57,9 +55,7 @@ async def setup_database(check_test_mode):
 
 @pytest.fixture(scope="session")
 async def ac() -> AsyncClient:
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
 
 

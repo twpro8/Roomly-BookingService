@@ -18,9 +18,7 @@ class RoomsFacilitiesRepository(BaseRepository):
     mapper = RoomsFacilitiesDataMapper
 
     async def add_facilities(self, room_id: int, facilities_ids: list[int]):
-        get_existed_f_ids = select(RoomsFacilitiesOrm.facility_id).filter_by(
-            room_id=room_id
-        )
+        get_existed_f_ids = select(RoomsFacilitiesOrm.facility_id).filter_by(room_id=room_id)
         res = await self.session.execute(get_existed_f_ids)
 
         existed_f_ids = set(res.scalars().all())
@@ -36,8 +34,6 @@ class RoomsFacilitiesRepository(BaseRepository):
             )
             await self.session.execute(delete_query)
         if to_add:
-            insert_values = [
-                {"room_id": room_id, "facility_id": f_id} for f_id in to_add
-            ]
+            insert_values = [{"room_id": room_id, "facility_id": f_id} for f_id in to_add]
             insert_query = insert(RoomsFacilitiesOrm).values(insert_values)
             await self.session.execute(insert_query)

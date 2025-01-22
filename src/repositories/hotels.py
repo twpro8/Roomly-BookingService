@@ -31,17 +31,11 @@ class HotelsRepository(BaseRepository):
         )
         query = select(HotelsORM).filter(HotelsORM.id.in_(hotels_ids_to_get))
         if location:
-            query = query.filter(
-                func.lower(HotelsORM.location).contains(location.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.location).contains(location.strip().lower()))
         if title:
-            query = query.filter(
-                func.lower(HotelsORM.title).contains(title.strip().lower())
-            )
+            query = query.filter(func.lower(HotelsORM.title).contains(title.strip().lower()))
         query = query.order_by(HotelsORM.id).limit(limit).offset(offset)
         # print(query.compile(bind=engine, compile_kwargs={"literal_binds": True}))
         res = await self.session.execute(query)
 
-        return [
-            self.mapper.map_to_domain_entity(hotel) for hotel in res.scalars().all()
-        ]
+        return [self.mapper.map_to_domain_entity(hotel) for hotel in res.scalars().all()]
