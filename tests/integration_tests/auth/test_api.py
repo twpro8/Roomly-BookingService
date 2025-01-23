@@ -9,12 +9,7 @@ from httpx import AsyncClient
         ("Car Yugo", "yugish@gmail.com", "not_reliable", 200),
         ("Pythons", "pypy@gmail.com", "cute_programming", 200),
         ("Carrot", "pypy@gmail.com", "strong_password", 401),  # has the same email
-        (
-            "Pythons",
-            "watermelon@gmail.com",
-            "tasty_and_juicy",
-            401,
-        ),  # has the same username
+        ("Pythons", "malon@gmail.com", "yeah_juicy", 401),  # has the same username
     ],
 )
 async def test_auth_users(
@@ -70,7 +65,7 @@ async def test_auth_users(
         assert response.status_code == 401
 
     else:
-        assert response.status_code == status_code
+        assert response.status_code == 409
         assert isinstance(response.json(), dict)
 
         # Log in user

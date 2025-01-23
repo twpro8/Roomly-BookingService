@@ -11,3 +11,11 @@ class ObjectNotFoundException(MomoaException):
 
 class NoAvailableRoomsException(MomoaException):
     detail = "No rooms left"
+
+
+class ObjectAlreadyExistsException(MomoaException):
+    detail = "Object already exists"
+
+
+class HotelNotFoundException(MomoaException):
+    detail = "Hotel not found"
