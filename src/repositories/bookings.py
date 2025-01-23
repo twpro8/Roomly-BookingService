@@ -1,8 +1,8 @@
 from datetime import date
 
 from sqlalchemy import select
-from starlette.exceptions import HTTPException
 
+from src.exceptions import NoAvailableRoomsException
 from src.repositories.base import BaseRepository
 from src.repositories.mappers.mappers import BookingDataMapper
 from src.models.bookings import BookingsORM
@@ -29,5 +29,5 @@ class BookingsRepository(BaseRepository):
         if data.room_id in rooms_ids_to_book:
             booking = await self.add(data)
             return booking
-        else:
-            raise HTTPException(status_code=500, detail="There is no rooms left")
+
+        raise NoAvailableRoomsException

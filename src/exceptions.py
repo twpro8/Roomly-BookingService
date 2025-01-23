@@ -7,3 +7,7 @@ class MomoaException(Exception):
 
 class ObjectNotFoundException(MomoaException):
     detail = "Object not found"
+
+
+class NoAvailableRoomsException(MomoaException):
+    detail = "No rooms left"
