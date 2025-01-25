@@ -4,3 +4,4 @@ __pycache__
 _course_helpers
 .vscode
 .env
+app.log

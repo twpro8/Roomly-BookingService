@@ -28,6 +28,7 @@ click==8.1.7
 click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
+colorlog==6.9.0
 comm==0.2.2
 debugpy==1.8.11
 decorator==5.1.1
@@ -79,6 +80,7 @@ nbclient==0.10.2
 nbconvert==7.16.4
 nbformat==5.10.4
 nest-asyncio==1.6.0
+nodeenv==1.9.1
 notebook==7.3.2
 notebook_shim==0.2.4
 overrides==7.7.0
@@ -104,6 +106,7 @@ pydantic-settings==2.7.0
 pydantic_core==2.20.1
 Pygments==2.18.0
 PyJWT==2.10.1
+pyright==1.1.392.post0
 pytest==8.3.4
 pytest-asyncio==0.25.2
 pytest-dotenv==0.5.2

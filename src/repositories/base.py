@@ -1,3 +1,7 @@
+import logging
+from typing import Any
+
+from asyncpg import UniqueViolationError
 from sqlalchemy import insert, select, update, delete
 from pydantic import BaseModel
 from sqlalchemy.exc import NoResultFound, IntegrityError
@@ -39,14 +43,19 @@ class BaseRepository:
             raise ObjectNotFoundException
         return self.mapper.map_to_domain_entity(model)
 
-    async def add(self, data: BaseModel):
-        stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
+    async def add(self, data: BaseModel) -> BaseModel | Any:
         try:
-            res = await self.session.execute(stmt)
-        except IntegrityError:
-            raise ObjectAlreadyExistsException
-        model = res.scalars().one()
-        return self.mapper.map_to_domain_entity(model)
+            add_data_stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
+            result = await self.session.execute(add_data_stmt)
+            model = result.scalars().one()
+            return self.mapper.map_to_domain_entity(model)
+        except IntegrityError as ex:
+            logging.exception(f"Failed to add data to DB, input data: {data}")
+            if isinstance(ex.orig.__cause__, UniqueViolationError):
+                raise ObjectAlreadyExistsException from ex
+            else:
+                logging.exception(f"Unknown error: failed to add data to DB, input data: {data}")
+                raise ex
 
     async def add_bulk(self, data: list[BaseModel]):
         stmt = insert(self.model).values([item.model_dump() for item in data])
