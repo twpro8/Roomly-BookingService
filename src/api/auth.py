@@ -1,7 +1,12 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, Response
 
 from src.api.dependencies import UserIdDep
-from src.exceptions import ObjectAlreadyExistsException
+from src.exceptions import (
+    ObjectAlreadyExistsException,
+    UserAlreadyExistsHTTPException,
+    UserDoesNotExistHTTPException,
+    IncorrectPasswordHTTPException,
+)
 from src.schemas.users import UserRequestAdd, AddUser, UserLogin
 from src.services.auth import AuthService
 
@@ -20,7 +25,7 @@ async def register_user(db: DBDep, data: UserRequestAdd):
     try:
         await db.users.add(new_user_data)
     except ObjectAlreadyExistsException:
-        raise HTTPException(status_code=409, detail="User already exists")
+        raise UserAlreadyExistsHTTPException
 
     await db.commit()
 
@@ -31,9 +36,9 @@ async def register_user(db: DBDep, data: UserRequestAdd):
 async def login_user(db: DBDep, data: UserLogin, response: Response):
     user = await db.users.get_user_with_hashed_password(username=data.username)
     if not user:
-        raise HTTPException(status_code=401, detail="User does not exist")
+        raise UserDoesNotExistHTTPException
     if not AuthService().verify_password(data.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Incorrect password")
+        raise IncorrectPasswordHTTPException
     access_token = AuthService().create_access_token({"user_id": user.id})
     response.set_cookie("access_token", access_token, httponly=True)
 
