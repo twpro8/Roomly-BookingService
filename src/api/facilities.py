@@ -11,7 +11,7 @@ router = APIRouter(prefix="/facilities", tags=["Facilities"])
 @router.get("")
 @cache(expire=15)
 async def get_facilities(db: DBDep):
-    return await db.facilities.get_all()
+    return await FacilityService(db).get_facilities()
 
 
 @router.post("")

@@ -1,26 +1,26 @@
 from fastapi import APIRouter, Body
 
 from src.exceptions import (
-    ObjectNotFoundException,
     NoAvailableRoomsException,
     RoomNotFoundHTTPException,
     NoAvailableRoomsHTTPException,
+    RoomNotFoundException,
 )
-from src.schemas.bookings import BookingAddRequest, BookingAdd
+from src.schemas.bookings import BookingAddRequest
 from src.api.dependencies import DBDep, UserIdDep
-
+from src.services.bookings import BookingService
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
 
 @router.get("")
 async def get_bookings(db: DBDep):
-    return await db.bookings.get_all()
+    return await BookingService(db).get_bookings()
 
 
 @router.get("/me")
 async def get_my_bookings(db: DBDep, user_id: UserIdDep):
-    return await db.bookings.get_filtered(user_id=user_id)
+    return await BookingService(db).get_my_bookings(user_id)
 
 
 @router.post("")
@@ -69,21 +69,16 @@ async def create_booking(
     ),
 ):
     try:
-        room = await db.rooms.get_one(id=booking_data.room_id)
-    except ObjectNotFoundException:
+        booking = await BookingService(db).create_booking(user_id, booking_data)
+    except RoomNotFoundException:
         raise RoomNotFoundHTTPException
-    _booking_data = BookingAdd(user_id=user_id, price=room.price, **booking_data.model_dump())
-    try:
-        booking = await db.bookings.add_booking(_booking_data, hotel_id=room.hotel_id)
     except NoAvailableRoomsException:
         raise NoAvailableRoomsHTTPException
 
-    await db.commit()
     return {"status": "ok", "data": booking}
 
 
 @router.delete("{booking_id}")
 async def delete_booking(db: DBDep, booking_id: int):
-    await db.bookings.delete(id=booking_id)
-    await db.commit()
+    await BookingService(db).delete_booking(booking_id)
     return {"status": "ok"}

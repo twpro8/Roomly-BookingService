@@ -74,3 +74,15 @@ def check_date_to_after_date_from(date_from: date, date_to: date) -> None:
             status_code=422,
             detail='"Check-out" date must be later than the "check-in" date.',
         )
+
+
+class UserAlreadyExistsException(MomoaException):
+    detail = "User already exists"
+
+
+class UserDoesNotExistException(MomoaException):
+    detail = "User does not exist"
+
+
+class IncorrectPasswordException(MomoaException):
+    detail = "Incorrect password"
