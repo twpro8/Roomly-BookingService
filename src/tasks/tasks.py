@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import os
-
+from time import sleep
 from PIL import Image
 
 from src.database import null_pool_session_maker
@@ -42,3 +42,9 @@ async def get_checkin_days_helper():
 def send_emails_when_checkin():
     logging.debug("The send_emails_when_checkin function is called")
     asyncio.run(get_checkin_days_helper())
+
+
+@celery_instance.task
+def test_task():
+    sleep(5)
+    print("The job is done!")

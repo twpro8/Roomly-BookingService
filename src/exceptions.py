@@ -22,8 +22,12 @@ class ObjectAlreadyExistsException(MomoaException):
     detail = "Object already exists"
 
 
-class HotelNotFoundException(MomoaException):
+class HotelNotFoundException(ObjectNotFoundException):
     detail = "Hotel not found"
+
+
+class RoomNotFoundException(ObjectNotFoundException):
+    detail = "Room not found"
 
 
 class MomoaHTTPException(HTTPException):

@@ -34,7 +34,6 @@ async def get_hotels(
     return hotels
 
 
-
 @router.get("/{hotel_id}")
 async def get_hotel(hotel_id: int, db: DBDep):
     try:
