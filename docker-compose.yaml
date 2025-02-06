@@ -3,8 +3,8 @@ services:
     container_name: 'booking_backend'
     build:
       context: .
-    ports:
-      - "7878:8000"
+#    ports:
+#      - "7878:8000"
     networks:
       - momoa-network
     env_file:
