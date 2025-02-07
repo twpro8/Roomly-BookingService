@@ -19,7 +19,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/register")
-async def register_user(db: DBDep, data: UserRequestAdd):
+async def register(db: DBDep, data: UserRequestAdd):
     try:
         await AuthService(db).register_user(data=data)
     except UserAlreadyExistsException:
@@ -28,7 +28,7 @@ async def register_user(db: DBDep, data: UserRequestAdd):
 
 
 @router.post("/login")
-async def login_user(db: DBDep, data: UserLogin, response: Response):
+async def login(db: DBDep, data: UserLogin, response: Response):
     try:
         access_token = await AuthService(db).login_user(data=data)
     except UserDoesNotExistException:

@@ -24,7 +24,7 @@ async def get_my_bookings(db: DBDep, user_id: UserIdDep):
 
 
 @router.post("")
-async def create_booking(
+async def add_booking(
     db: DBDep,
     user_id: UserIdDep,
     booking_data: BookingAddRequest = Body(

@@ -4,5 +4,6 @@ __pycache__
 _course_helpers
 .vscode
 .env
+.env-test
 app.log
 README.md
