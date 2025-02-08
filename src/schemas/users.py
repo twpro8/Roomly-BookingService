@@ -1,22 +1,22 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class User(BaseModel):
     id: int
-    username: str
-    email: EmailStr
-    bio: str | None
+    username: str = Field(min_length=5, max_length=20)
+    email: EmailStr = Field(max_length=50)
+    bio: str | None = Field(default=None, max_length=200)
 
 
 class UserRequestAdd(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+    username: str = Field(min_length=5, max_length=20)
+    email: EmailStr = Field(max_length=50)
+    password: str = Field(min_length=6, max_length=50)
 
 
 class AddUser(BaseModel):
-    username: str
-    email: EmailStr
+    username: str = Field(min_length=5, max_length=20)
+    email: EmailStr = Field(max_length=50)
     hashed_password: str
 
 
@@ -25,5 +25,5 @@ class UserWithHashedPassword(User):
 
 
 class UserLogin(BaseModel):
-    username: str
-    password: str
+    username: str = Field(min_length=5, max_length=20)
+    password: str = Field(min_length=6, max_length=50)
