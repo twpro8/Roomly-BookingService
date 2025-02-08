@@ -23,7 +23,7 @@ class RoomService(BaseService):
             hotel_id=hotel_id, date_from=date_from, date_to=date_to
         )
 
-    async def get_room(self, hotel_id: int, room_id: int):
+    async def get_room(self, room_id: int, hotel_id: int):
         return await self.db.rooms.get_one_or_none_with_rels(id=room_id, hotel_id=hotel_id)
 
     async def creat_room(

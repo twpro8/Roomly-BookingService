@@ -30,6 +30,10 @@ class RoomNotFoundException(ObjectNotFoundException):
     detail = "Room not found"
 
 
+class HotelAlreadyExistsException(MomoaException):
+    detail = "Hotel already exists"
+
+
 class MomoaHTTPException(HTTPException):
     status_code = 500
     detail = None
@@ -41,6 +45,11 @@ class MomoaHTTPException(HTTPException):
 class HotelNotFoundHTTPException(MomoaHTTPException):
     status_code = 404
     detail = "Hotel not found"
+
+
+class HotelAlreadyExistsHTTPException(MomoaHTTPException):
+    status_code = 409
+    detail = "Hotel already exists"
 
 
 class UserAlreadyExistsHTTPException(MomoaHTTPException):

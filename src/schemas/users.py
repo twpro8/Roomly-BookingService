@@ -13,6 +13,9 @@ class UserRequestAdd(BaseModel):
     email: EmailStr = Field(max_length=50)
     password: str = Field(min_length=6, max_length=50)
 
+    class Config:
+        extra = "forbid"
+
 
 class AddUser(BaseModel):
     username: str = Field(min_length=5, max_length=20)

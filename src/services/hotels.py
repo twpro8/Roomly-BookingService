@@ -5,6 +5,7 @@ from src.exceptions import (
     check_date_to_after_date_from,
     ObjectNotFoundException,
     HotelNotFoundException,
+    HotelAlreadyExistsException,
 )
 from src.schemas.hotels import HotelAdd, HotelPATCH
 from src.services.base import BaseService
@@ -34,12 +35,13 @@ class HotelService(BaseService):
         return await self.db.hotels.get_one(id=hotel_id)
 
     async def add_hotel(self, data: HotelAdd):
-        if_hotel = await self.db.hotels.get_one_or_none(title=data.title)
-        if if_hotel:
-            raise
-        hotel = await self.db.hotels.add(data)
+        hotel = await self.db.hotels.get_one_or_none(location=data.location)
+        if hotel:
+            raise HotelAlreadyExistsException
+
+        new_hotel = await self.db.hotels.add(data)
         await self.db.commit()
-        return hotel
+        return new_hotel
 
     async def edit_hotel(self, hotel_id: int, data: HotelAdd) -> None:
         await self.db.hotels.edit(data, id=hotel_id)

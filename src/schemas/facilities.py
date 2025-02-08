@@ -4,6 +4,9 @@ from pydantic import BaseModel
 class FacilityAddRequest(BaseModel):
     title: str
 
+    class Config:
+        extra = "forbid"
+
 
 class Facility(FacilityAddRequest):
     id: int

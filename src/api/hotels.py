@@ -6,6 +6,8 @@ from fastapi_cache.decorator import cache
 from src.exceptions import (
     ObjectNotFoundException,
     HotelNotFoundHTTPException,
+    HotelAlreadyExistsHTTPException,
+    HotelAlreadyExistsException,
 )
 from src.schemas.hotels import HotelPATCH, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
@@ -62,10 +64,13 @@ async def add_hotel(
                     "location": "Amsterdam. 12st and mainfield",
                 },
             },
-        }
+        },
     ),
 ):
-    hotel = await HotelService(db).add_hotel(hotel_data)
+    try:
+        hotel = await HotelService(db).add_hotel(hotel_data)
+    except HotelAlreadyExistsException:
+        raise HotelAlreadyExistsHTTPException
     return {"status": "ok", "data": hotel}
 
 
