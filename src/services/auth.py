@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timezone, timedelta
 
 from fastapi import HTTPException
@@ -11,6 +12,7 @@ from src.exceptions import (
     UserAlreadyExistsException,
     UserDoesNotExistException,
     IncorrectPasswordException,
+    UsernameValidationException,
 )
 from src.schemas.users import UserRequestAdd, AddUser, UserLogin
 from src.services.base import BaseService
@@ -46,10 +48,20 @@ class AuthService(BaseService):
         except jwt.exceptions.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="Signature has expired")
 
+    @staticmethod
+    def validate_username(username: str):
+        username = username.strip()
+        if not re.match(r"^[a-zA-Z0-9_]+$", username):
+            raise UsernameValidationException
+        return username
+
     async def register_user(self, data: UserRequestAdd) -> None:
+        validated_username = self.validate_username(data.username)
+        normalized_email = data.email.strip().lower()
         hashed_password = self.hash_password(data.password)
+
         new_user_data = AddUser(
-            username=data.username, email=data.email, hashed_password=hashed_password
+            username=validated_username, email=normalized_email, hashed_password=hashed_password
         )
         try:
             await self.db.users.add(new_user_data)
