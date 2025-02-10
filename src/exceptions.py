@@ -34,8 +34,12 @@ class HotelAlreadyExistsException(MomoaException):
     detail = "Hotel already exists"
 
 
-class UsernameValidationException(MomoaException):
-    detail = "Invalid username"
+class InvalidCharacterException(MomoaException):
+    detail = "Invalid character in string"
+
+
+class InvalidUserDataException(MomoaException):
+    detail = "Invalid user data"
 
 
 class MomoaHTTPException(HTTPException):
@@ -58,7 +62,7 @@ class HotelNotFoundHTTPException(MomoaHTTPException):
 
 class HotelAlreadyExistsHTTPException(MomoaHTTPException):
     status_code = 409
-    detail = "Hotel already exists"
+    detail = "Hotel with such title and location already exists"
 
 
 class UserAlreadyExistsHTTPException(MomoaHTTPException):
@@ -104,3 +108,13 @@ class UserDoesNotExistException(MomoaException):
 
 class IncorrectPasswordException(MomoaException):
     detail = "Incorrect password"
+
+
+class InvalidIDHTTPException(MomoaHTTPException):
+    status_code = 422
+    detail = "Hotel ID must be greater than or equal to 1"
+
+
+class InvalidCharacterHTTPException(MomoaHTTPException):
+    status_code = 422
+    detail = "Forbidden character in title or location"
