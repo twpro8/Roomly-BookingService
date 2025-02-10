@@ -8,7 +8,7 @@ from src.exceptions import (
     UserAlreadyExistsException,
     UserDoesNotExistException,
     IncorrectPasswordException,
-    UsernameValidationException,
+    InvalidCharacterException,
     UsernameValidationHTTPException,
 )
 from src.schemas.users import UserRequestAdd, UserLogin
@@ -26,7 +26,7 @@ async def register(db: DBDep, data: UserRequestAdd):
         await AuthService(db).register_user(data=data)
     except UserAlreadyExistsException:
         raise UserAlreadyExistsHTTPException
-    except UsernameValidationException:
+    except InvalidCharacterException:
         raise UsernameValidationHTTPException
     return {"status": "ok"}
 
