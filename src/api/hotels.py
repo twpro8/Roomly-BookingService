@@ -8,6 +8,11 @@ from src.exceptions import (
     HotelNotFoundHTTPException,
     HotelAlreadyExistsHTTPException,
     HotelAlreadyExistsException,
+    HotelNotFoundException,
+    InvalidIDHTTPException,
+    InvalidUserDataException,
+    InvalidCharacterException,
+    InvalidCharacterHTTPException,
 )
 from src.schemas.hotels import HotelPATCH, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
@@ -76,7 +81,17 @@ async def add_hotel(
 
 @router.put("/{hotel_id}", summary="Edit The Entire Hotel")
 async def edit_hotel(db: DBDep, hotel_id: int, hotel_data: HotelAdd):
-    await HotelService(db).edit_hotel(hotel_id, hotel_data)
+    try:
+        await HotelService(db).edit_hotel(hotel_id, hotel_data)
+    except InvalidUserDataException:
+        raise InvalidIDHTTPException
+    except InvalidCharacterException:
+        raise InvalidCharacterHTTPException
+    except HotelAlreadyExistsException:
+        raise HotelAlreadyExistsHTTPException
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
+
     return {"status": "ok"}
 
 

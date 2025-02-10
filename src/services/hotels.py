@@ -6,9 +6,11 @@ from src.exceptions import (
     ObjectNotFoundException,
     HotelNotFoundException,
     HotelAlreadyExistsException,
+    InvalidUserDataException,
 )
 from src.schemas.hotels import HotelAdd, HotelPATCH
 from src.services.base import BaseService
+from src.services.utils import Validator
 
 
 class HotelService(BaseService):
@@ -35,7 +37,7 @@ class HotelService(BaseService):
         return await self.db.hotels.get_one(id=hotel_id)
 
     async def add_hotel(self, data: HotelAdd):
-        hotel = await self.db.hotels.get_one_or_none(location=data.location)
+        hotel = await self.db.hotels.get_one_or_none(location=data.location, title=data.title)
         if hotel:
             raise HotelAlreadyExistsException
 
@@ -44,6 +46,20 @@ class HotelService(BaseService):
         return new_hotel
 
     async def edit_hotel(self, hotel_id: int, data: HotelAdd) -> None:
+        if hotel_id <= 0:
+            raise InvalidUserDataException
+
+        Validator.validate_string(data.title)
+        Validator.validate_string(data.location)
+
+        hotel = await self.db.hotels.get_one_or_none(location=data.location, title=data.title)
+        if hotel:
+            raise HotelAlreadyExistsException
+
+        existed_hotel = await self.db.hotels.get_one_or_none(id=hotel_id)
+        if existed_hotel is None:
+            raise HotelNotFoundException
+
         await self.db.hotels.edit(data, id=hotel_id)
         await self.db.commit()
 

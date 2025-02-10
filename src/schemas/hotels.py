@@ -10,12 +10,12 @@ class HotelAdd(BaseModel):
 
 
 class HotelPATCH(BaseModel):
-    title: str | None = Field(None)
-    location: str | None = Field(None)
+    title: str | None = Field(None, min_length=5, max_length=100)
+    location: str | None = Field(None, min_length=5, max_length=100)
 
     class Config:
         extra = "forbid"
 
 
 class Hotel(HotelAdd):
-    id: int
+    id: int = Field(gt=0, lt=2147483647)
