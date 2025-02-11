@@ -14,7 +14,6 @@ from src.exceptions import (
 )
 from src.schemas.users import UserRequestAdd, AddUser, UserLogin
 from src.services.base import BaseService
-from src.services.utils import Validator
 
 
 class AuthService(BaseService):
@@ -48,7 +47,6 @@ class AuthService(BaseService):
             raise HTTPException(status_code=401, detail="Signature has expired")
 
     async def register_user(self, data: UserRequestAdd) -> None:
-        Validator.validate_string(data.username)
         normalized_email = data.email.strip().lower()
         hashed_password = self.hash_password(data.password)
 

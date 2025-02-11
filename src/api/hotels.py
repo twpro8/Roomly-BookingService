@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import Query, APIRouter, Body
+from fastapi import Query, APIRouter, Body, Path
 from fastapi_cache.decorator import cache
 
 from src.exceptions import (
@@ -9,10 +9,6 @@ from src.exceptions import (
     HotelAlreadyExistsHTTPException,
     HotelAlreadyExistsException,
     HotelNotFoundException,
-    InvalidIDHTTPException,
-    InvalidUserDataException,
-    InvalidCharacterException,
-    InvalidCharacterHTTPException,
 )
 from src.schemas.hotels import HotelPATCH, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
@@ -42,7 +38,7 @@ async def get_hotels(
 
 
 @router.get("/{hotel_id}")
-async def get_hotel(hotel_id: int, db: DBDep):
+async def get_hotel(db: DBDep, hotel_id: int = Path(gt=0)):
     try:
         hotel = await HotelService(db).get_hotel(hotel_id)
     except ObjectNotFoundException:
@@ -80,13 +76,9 @@ async def add_hotel(
 
 
 @router.put("/{hotel_id}", summary="Edit The Entire Hotel")
-async def edit_hotel(db: DBDep, hotel_id: int, hotel_data: HotelAdd):
+async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: int = Path(gt=0)):
     try:
         await HotelService(db).edit_hotel(hotel_id, hotel_data)
-    except InvalidUserDataException:
-        raise InvalidIDHTTPException
-    except InvalidCharacterException:
-        raise InvalidCharacterHTTPException
     except HotelAlreadyExistsException:
         raise HotelAlreadyExistsHTTPException
     except HotelNotFoundException:
@@ -102,12 +94,12 @@ async def edit_hotel(db: DBDep, hotel_id: int, hotel_data: HotelAdd):
     <h3>Description</h3>
     You can edit several or all attributes of the hotel.""",
 )
-async def partly_edit_hotel(db: DBDep, hotel_id: int, hotel_data: HotelPATCH):
+async def partly_edit_hotel(db: DBDep, hotel_data: HotelPATCH, hotel_id: int = Path(gt=0)):
     await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
     return {"status": "ok"}
 
 
 @router.delete("/{hotel_id}")
-async def delete_hotel(db: DBDep, hotel_id: int):
+async def delete_hotel(db: DBDep, hotel_id: int = Path(gt=0)):
     await HotelService(db).delete_hotel(hotel_id)
     return {"status": "ok"}
