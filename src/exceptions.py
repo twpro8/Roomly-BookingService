@@ -34,25 +34,12 @@ class HotelAlreadyExistsException(MomoaException):
     detail = "Hotel already exists"
 
 
-class InvalidCharacterException(MomoaException):
-    detail = "Invalid character in string"
-
-
-class InvalidUserDataException(MomoaException):
-    detail = "Invalid user data"
-
-
 class MomoaHTTPException(HTTPException):
     status_code = 500
     detail = None
 
     def __init__(self):
         super().__init__(status_code=self.status_code, detail=self.detail)
-
-
-class UsernameValidationHTTPException(MomoaHTTPException):
-    status_code = 422
-    detail = "Username can only contain letters, numbers, and underscores."
 
 
 class HotelNotFoundHTTPException(MomoaHTTPException):
@@ -108,13 +95,3 @@ class UserDoesNotExistException(MomoaException):
 
 class IncorrectPasswordException(MomoaException):
     detail = "Incorrect password"
-
-
-class InvalidIDHTTPException(MomoaHTTPException):
-    status_code = 422
-    detail = "Hotel ID must be greater than or equal to 1"
-
-
-class InvalidCharacterHTTPException(MomoaHTTPException):
-    status_code = 422
-    detail = "Forbidden character in title or location"
