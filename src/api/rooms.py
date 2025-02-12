@@ -11,6 +11,9 @@ from src.exceptions import (
 from src.schemas.rooms import RoomAddRequest, RoomPatchRequest
 from src.api.dependencies import DBDep
 from src.services.rooms import RoomService
+from src.api.utils import TypeID
+
+
 
 router = APIRouter(prefix="/hotels", tags=["Rooms"])
 
@@ -26,7 +29,7 @@ async def get_rooms(
 
 
 @router.get("/{hotel_id}/rooms/{room_id}")
-async def get_room(db: DBDep, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)):
+async def get_room(db: DBDep, hotel_id: TypeID, room_id: TypeID):
     room = await RoomService(db).get_room(room_id, hotel_id)
     if room is None:
         raise RoomNotFoundHTTPException
@@ -34,7 +37,7 @@ async def get_room(db: DBDep, hotel_id: int = Path(gt=0), room_id: int = Path(gt
 
 
 @router.post("/{hotel_id}/rooms")
-async def add_room(db: DBDep, room_data: RoomAddRequest = Body(), hotel_id: int = Path(gt=0)):
+async def add_room(db: DBDep, hotel_id: TypeID, room_data: RoomAddRequest = Body()):
     try:
         room = await RoomService(db).creat_room(hotel_id, room_data)
     except HotelNotFoundException:
@@ -50,7 +53,10 @@ async def add_room(db: DBDep, room_data: RoomAddRequest = Body(), hotel_id: int 
                 You have to edit all the attributes of the room at once""",
 )
 async def edit_room(
-    db: DBDep, room_data: RoomAddRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)
+    db: DBDep,
+    room_data: RoomAddRequest,
+    hotel_id: TypeID,
+    room_id: TypeID
 ):
     try:
         await RoomService(db).edit_room(hotel_id, room_id, room_data)
@@ -69,7 +75,10 @@ async def edit_room(
             You can edit several or all the attributes of the room""",
 )
 async def partly_edit_room(
-    db: DBDep, room_data: RoomPatchRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)
+    db: DBDep,
+    room_data: RoomPatchRequest,
+    hotel_id: TypeID,
+    room_id: TypeID
 ):
     try:
         await RoomService(db).partly_edit_room(hotel_id, room_id, room_data)
@@ -85,7 +94,7 @@ async def partly_edit_room(
     summary="Delete Room",
     description="<h3>Permanently delete room by id</h3>",
 )
-async def delete_room(db: DBDep, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)):
+async def delete_room(db: DBDep, hotel_id: TypeID, room_id: TypeID):
     try:
         await RoomService(db).delete_room(hotel_id, room_id)
     except HotelNotFoundException:

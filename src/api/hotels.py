@@ -13,6 +13,8 @@ from src.exceptions import (
 from src.schemas.hotels import HotelPATCH, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
 from src.services.hotels import HotelService
+from src.api.utils import TypeID
+
 
 router = APIRouter(prefix="/hotels", tags=["Hotels"])
 
@@ -38,7 +40,7 @@ async def get_hotels(
 
 
 @router.get("/{hotel_id}")
-async def get_hotel(db: DBDep, hotel_id: int = Path(gt=0, lt=2147483647)):
+async def get_hotel(db: DBDep, hotel_id: TypeID):
     try:
         hotel = await HotelService(db).get_hotel(hotel_id)
     except ObjectNotFoundException:
@@ -76,7 +78,7 @@ async def add_hotel(
 
 
 @router.put("/{hotel_id}", summary="Edit The Entire Hotel")
-async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: int = Path(gt=0, lt=2147483647)):
+async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: TypeID):
     try:
         await HotelService(db).edit_hotel(hotel_id, hotel_data)
     except HotelAlreadyExistsException:
@@ -94,9 +96,7 @@ async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: int = Path(gt=0,
     <h3>Description</h3>
     You can edit several or all attributes of the hotel.""",
 )
-async def partly_edit_hotel(
-    db: DBDep, hotel_data: HotelPATCH, hotel_id: int = Path(gt=0, lt=2147483647)
-):
+async def partly_edit_hotel(db: DBDep, hotel_data: HotelPATCH, hotel_id: TypeID):
     try:
         await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
     except HotelAlreadyExistsException:
@@ -108,7 +108,7 @@ async def partly_edit_hotel(
 
 
 @router.delete("/{hotel_id}")
-async def delete_hotel(db: DBDep, hotel_id: int = Path(gt=0, lt=2147483647)):
+async def delete_hotel(db: DBDep, hotel_id: TypeID):
     try:
         await HotelService(db).delete_hotel(hotel_id)
     except HotelNotFoundException:

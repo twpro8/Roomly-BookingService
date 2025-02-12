@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Path
 
+from src.api.utils import TypeID
 from src.exceptions import (
     NoAvailableRoomsException,
     RoomNotFoundHTTPException,
@@ -79,6 +80,6 @@ async def add_booking(
 
 
 @router.delete("{booking_id}")
-async def delete_booking(db: DBDep, booking_id: int = Path(gt=0)):
+async def delete_booking(db: DBDep, booking_id: TypeID):
     await BookingService(db).delete_booking(booking_id)
     return {"status": "ok"}
