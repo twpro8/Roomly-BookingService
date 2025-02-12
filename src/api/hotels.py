@@ -95,11 +95,20 @@ async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: int = Path(gt=0)
     You can edit several or all attributes of the hotel.""",
 )
 async def partly_edit_hotel(db: DBDep, hotel_data: HotelPATCH, hotel_id: int = Path(gt=0)):
-    await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
+    try:
+        await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
+    except HotelAlreadyExistsException:
+        raise HotelAlreadyExistsHTTPException
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
+
     return {"status": "ok"}
 
 
 @router.delete("/{hotel_id}")
 async def delete_hotel(db: DBDep, hotel_id: int = Path(gt=0)):
-    await HotelService(db).delete_hotel(hotel_id)
+    try:
+        await HotelService(db).delete_hotel(hotel_id)
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
     return {"status": "ok"}

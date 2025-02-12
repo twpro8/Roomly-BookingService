@@ -49,7 +49,9 @@ async def add_room(db: DBDep, room_data: RoomAddRequest = Body(), hotel_id: int 
                 <h3>Description</h3>
                 You have to edit all the attributes of the room at once""",
 )
-async def edit_room(db: DBDep, room_data: RoomAddRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)):
+async def edit_room(
+    db: DBDep, room_data: RoomAddRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)
+):
     try:
         await RoomService(db).edit_room(hotel_id, room_id, room_data)
     except HotelNotFoundException:
@@ -66,7 +68,9 @@ async def edit_room(db: DBDep, room_data: RoomAddRequest, hotel_id: int = Path(g
             <h3>Description</h3>
             You can edit several or all the attributes of the room""",
 )
-async def partly_edit_room(db: DBDep, room_data: RoomPatchRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)):
+async def partly_edit_room(
+    db: DBDep, room_data: RoomPatchRequest, hotel_id: int = Path(gt=0), room_id: int = Path(gt=0)
+):
     try:
         await RoomService(db).partly_edit_room(hotel_id, room_id, room_data)
     except HotelNotFoundException:
