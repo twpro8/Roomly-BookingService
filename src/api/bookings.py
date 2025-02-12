@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Path
+from fastapi import APIRouter, Body
 
 from src.api.utils import TypeID
 from src.exceptions import (

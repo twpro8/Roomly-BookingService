@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import Query, APIRouter, Body, Path
+from fastapi import Query, APIRouter, Body
 from fastapi_cache.decorator import cache
 
 from src.exceptions import (

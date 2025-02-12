@@ -33,6 +33,15 @@ async def test_get_hotel(ac, hotel_id: int):
     [
         # Test case 1: Valid hotel data
         ("GoodPlace1", "Amsterdam", 200, None),
+        ("GoodPlace10", "Amsterdam0", 200, None),
+        ("GoodPlace11", "Amsterdam9", 200, None),
+        ("GoodPlace12", "Amsterdam8", 200, None),
+        ("GoodPlace13", "Amsterdam7", 200, None),
+        ("GoodPlace14", "Amsterdam6", 200, None),
+        ("GoodPlace15", "Amsterdam5", 200, None),
+        ("GoodPlace16", "Amsterdam4", 200, None),
+        ("GoodPlace17", "Amsterdam3", 200, None),
+        ("GoodPlace18", "Amsterdam2", 200, None),
         # Test case 2: Valid hotel data
         ("GoodPlace2", "New York", 200, None),
         # Test case 3: Valid hotel data
@@ -97,10 +106,15 @@ async def test_add_hotel(
         (-1, "New Title 5", "New Location 5", 422, None),
         # Test case 9: Hotel not found
         (1024, "New grate Title", "One More New Location", 404, None),
-        # Some other validation errors:
+        # Test case 10: Missing all
+        (None, None, None, 422, None),
+        # Test case 11: Missing title
         (2, "", "Somewhere else.. New", 422, None),
+        # Test case 12: Missing all
         (3, "", "", 422, None),
+        # Test case 13: Missing location
         (1, "New is New", "", 422, None),
+        # Test case 14: Invalid location
         (2, "Title is New", 1, 422, None),
     ],
 )
@@ -133,26 +147,32 @@ async def test_edit_hotel(
     [
         # Test case 1: Valid hotel data
         (4, "New Title 1", "New Location 1", 200, None),
-        # Test case 2 Duplicate hotel
+        # Test case 2: Duplicate hotel
         (5, "New Title 1", "New Location 1", 409, None),
         # Test case 3: Unexpected additional field
         (6, "New Title 4", "New Location 4", 422, "Boooo!"),
-        (4, "1" * 100, "ValidLocation1", 200, None),
         # Test case 4: Exceeded max length for title
+        (4, "1" * 100, "ValidLocation1", 200, None),
+        # Test case 5: Exceeded max length for title
         (5, "2" * 101, "ValidLocation1", 422, None),
-        # Test case 5: Max length for location
+        # Test case 6: Max length for location
         (6, "NewValidName1", "3" * 100, 200, None),
-        # Test case 6: Exceeded max length for location
+        # Test case 7: Exceeded max length for location
         (4, "NewValidName1", "4" * 101, 422, None),
-        # Test case 7: Invalid hotel id
+        # Test case 8: Invalid hotel id
         (-1, "New Title 5", "New Location 5", 422, None),
-        # Test case 8: Hotel not found
+        # Test case 9: Hotel not found
         (1024, "New grate Title", "One More New Location", 404, None),
-        # Some other validation errors:
+        # Test case 10: Empty title
         (5, "", "Somewhere else.. New", 200, None),
+        # Test case 11: Empty title and location
         (6, "", "", 422, None),
+        # Test case 12: Empty location
         (4, "New is New", "", 200, None),
+        # Test case 13: Invalid location (numeric)
         (5, "Title is New", 1, 422, None),
+        # Test case 14: Missing all
+        (None, None, None, 422, None),
     ],
 )
 async def test_partly_edit_hotel(
@@ -188,13 +208,25 @@ async def test_partly_edit_hotel(
         )
 
 
-@pytest.mark.parametrize("hotel_id", [4, 5, 6])
-async def test_delete_hotel(ac, hotel_id: int):
+@pytest.mark.parametrize(
+    "hotel_id, status_code",
+    [
+        (7, 200),
+        (111, 404),
+        (8, 200),
+        (-1, 422),
+        (0, 422),
+        (9, 200),
+        (99999999999, 422),
+        (None, 422),
+    ],
+)
+async def test_delete_hotel(ac, hotel_id: int, status_code: int):
     response = await ac.delete(f"/hotels/{hotel_id}")
-    assert response.status_code == 200
-
-    is_deleted = await ac.get(f"/hotels/{hotel_id}")
-    assert is_deleted.status_code == 404
+    assert response.status_code == status_code
+    if response.status_code == 200:
+        is_deleted = await ac.get(f"/hotels/{hotel_id}")
+        assert is_deleted.status_code == 404
 
 
 def validate_hotel_data(hotel, hotel_id: int, title: str | None, location: str | None):
