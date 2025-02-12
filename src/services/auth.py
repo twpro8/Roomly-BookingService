@@ -11,8 +11,10 @@ from src.exceptions import (
     UserAlreadyExistsException,
     UserDoesNotExistException,
     IncorrectPasswordException,
+    UsernameAlreadyExistsException,
+    EmailAlreadyExistsException,
 )
-from src.schemas.users import UserRequestAdd, AddUser, UserLogin
+from src.schemas.users import UserRequestAdd, AddUser, UserLogin, UserPatch, UserPatchRequest
 from src.services.base import BaseService
 
 
@@ -69,3 +71,27 @@ class AuthService(BaseService):
 
     async def get_me(self, user_id: int):
         return await self.db.users.get_one_or_none(id=user_id)
+
+    async def partly_edit_user(self, user_id: int, data: UserPatchRequest) -> None:
+        new_data = {}
+        if data.username:
+            existing_user = await self.db.users.get_one_or_none(username=data.username)
+            if existing_user and existing_user.id != user_id:
+                raise UsernameAlreadyExistsException
+            new_data["username"] = data.username
+        if data.email:
+            normalized_email = data.email.strip().lower()
+            existing_user = await self.db.users.get_one_or_none(email=data.email)
+            if existing_user and existing_user.id != user_id:
+                raise EmailAlreadyExistsException
+            new_data["email"] = normalized_email
+        if data.password:
+            hashed_password = self.hash_password(data.password)
+            new_data["hashed_password"] = hashed_password
+        if data.bio:
+            new_data["bio"] = data.bio
+
+        data_to_add = UserPatch(**new_data)
+
+        await self.db.users.edit(id=user_id, data=data_to_add, exclude_unset=True)
+        await self.db.commit()

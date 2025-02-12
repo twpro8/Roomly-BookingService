@@ -85,7 +85,7 @@ async def test_auth_users(
         assert response.json()["access_token"] == ac.cookies.get("access_token")
 
         # Get current user
-        response = await ac.get("/users/profile")
+        response = await ac.get("/users/me")
         assert response.status_code == status_code
         user = response.json()
         assert isinstance(user, dict)
@@ -103,5 +103,5 @@ async def test_auth_users(
         assert not ac.cookies.get("access_token")
 
         # Get current user
-        response = await ac.get("/users/profile")
+        response = await ac.get("/users/me")
         assert response.status_code == 401

@@ -8,8 +8,12 @@ from src.exceptions import (
     UserAlreadyExistsException,
     UserDoesNotExistException,
     IncorrectPasswordException,
+    EmailAlreadyExistsHTTPException,
+    EmailAlreadyExistsException,
+    UsernameAlreadyExistsHTTPException,
+    UsernameAlreadyExistsException,
 )
-from src.schemas.users import UserRequestAdd, UserLogin
+from src.schemas.users import UserRequestAdd, UserLogin, UserPatchRequest
 from src.services.auth import AuthService
 
 from src.api.dependencies import DBDep
@@ -40,9 +44,20 @@ async def login(db: DBDep, data: UserLogin, response: Response):
     return {"status": "ok", "access_token": access_token}
 
 
-@router.get("/profile")
+@router.get("/me")
 async def get_me(db: DBDep, user_id: UserIdDep):
     return await AuthService(db).get_me(user_id)
+
+
+@router.patch("/me")
+async def partly_edit_user(db: DBDep, user_id: UserIdDep, data: UserPatchRequest):
+    try:
+        await AuthService(db).partly_edit_user(user_id=user_id, data=data)
+    except UsernameAlreadyExistsException:
+        raise UsernameAlreadyExistsHTTPException
+    except EmailAlreadyExistsException:
+        raise EmailAlreadyExistsHTTPException
+    return {"status": "ok"}
 
 
 @router.post("/logout")
