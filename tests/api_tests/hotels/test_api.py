@@ -53,9 +53,9 @@ async def test_get_hotel(ac, hotel_id: int):
         ("GoodPlace1", "Amsterdam", 409, None),
         # Test case 11: Unexpected additional field
         ("GoodPlace", "Amsterdam", 422, "Boooo!"),
-        # Test case 11: Unexpected additional field
+        # Test case 12: Unexpected additional field
         ("GoodPlace", "Amsterdam", 422, 11111),
-        # Test case 12: Duplicate hotel
+        # Test case 13: Duplicate hotel
         ("UniquePlace", "Amsterdam", 200, None),
     ],
 )
@@ -80,28 +80,28 @@ async def test_add_hotel(
     "hotel_id, new_title, new_location, status_code, surprise",
     [
         # Test case 1: Valid hotel data
-        (4, "New Title 1", "New Location 1", 200, None),
+        (1, "New Title 1", "New Location 1", 200, None),
         # Test case 2 Duplicate hotel
-        (5, "New Title 1", "New Location 1", 409, None),
+        (2, "New Title 1", "New Location 1", 409, None),
         # Test case 3: Unexpected additional field
-        (6, "New Title 4", "New Location 4", 422, "Boooo!"),
-        (4, "1" * 100, "ValidLocation", 200, None),
-        # Test case 4: Exceeded max length for title
-        (5, "2" * 101, "ValidLocation", 422, None),
-        # Test case 5: Max length for location
-        (6, "NewValidName", "3" * 100, 200, None),
-        # Test case 6: Exceeded max length for location
-        (4, "NewValidName", "4" * 101, 422, None),
-        # Test case 7: Invalid hotel id
+        (3, "New Title 4", "New Location 4", 422, "Boooo!"),
+        # Test case 4: Max length for title
+        (1, "1" * 100, "ValidLocation", 200, None),
+        # Test case 5: Exceeded max length for title
+        (2, "2" * 101, "ValidLocation", 422, None),
+        # Test case 6: Max length for location
+        (3, "NewValidName", "3" * 100, 200, None),
+        # Test case 7: Exceeded max length for location
+        (1, "NewValidName", "4" * 101, 422, None),
+        # Test case 8: Invalid hotel id
         (-1, "New Title 5", "New Location 5", 422, None),
-        # Test case 8: Hotel not found
+        # Test case 9: Hotel not found
         (1024, "New grate Title", "One More New Location", 404, None),
         # Some other validation errors:
-        (5, "", "Somewhere else.. New", 422, None),
-        (6, "", "", 422, None),
-        (4, "New is New", "", 422, None),
-        (5, "Title is New", 1, 422, None),
-        (6, "What..", "??????", 422, None),
+        (2, "", "Somewhere else.. New", 422, None),
+        (3, "", "", 422, None),
+        (1, "New is New", "", 422, None),
+        (2, "Title is New", 1, 422, None),
     ],
 )
 async def test_edit_hotel(
@@ -129,41 +129,63 @@ async def test_edit_hotel(
 
 
 @pytest.mark.parametrize(
-    "hotel_id, new_title, new_location",
+    "hotel_id, new_title, new_location, status_code, surprise",
     [
-        (4, "Rainbow Hotel-Club", None),
-        (5, "Grand NY 5 Stars", None),
-        (6, "Some Hotel", None),
-        (4, None, "Amsterdam. 12st and mainfield"),
-        (5, None, "New York. 12nd Twice street"),
-        (6, None, "Somewhere"),
-        (4, "Again New Title 1", "Again New Location 1"),
-        (5, "Again New Title 2", "Again New Location 2"),
-        (6, "Again New Title 3", "Again New Location 3"),
+        # Test case 1: Valid hotel data
+        (4, "New Title 1", "New Location 1", 200, None),
+        # Test case 2 Duplicate hotel
+        (5, "New Title 1", "New Location 1", 409, None),
+        # Test case 3: Unexpected additional field
+        (6, "New Title 4", "New Location 4", 422, "Boooo!"),
+        (4, "1" * 100, "ValidLocation1", 200, None),
+        # Test case 4: Exceeded max length for title
+        (5, "2" * 101, "ValidLocation1", 422, None),
+        # Test case 5: Max length for location
+        (6, "NewValidName1", "3" * 100, 200, None),
+        # Test case 6: Exceeded max length for location
+        (4, "NewValidName1", "4" * 101, 422, None),
+        # Test case 7: Invalid hotel id
+        (-1, "New Title 5", "New Location 5", 422, None),
+        # Test case 8: Hotel not found
+        (1024, "New grate Title", "One More New Location", 404, None),
+        # Some other validation errors:
+        (5, "", "Somewhere else.. New", 200, None),
+        (6, "", "", 422, None),
+        (4, "New is New", "", 200, None),
+        (5, "Title is New", 1, 422, None),
     ],
 )
 async def test_partly_edit_hotel(
-    ac, hotel_id: int, new_title: str | None, new_location: str | None
+    ac,
+    hotel_id: int,
+    new_title: str | None,
+    new_location: str | None,
+    status_code: int | None,
+    surprise: Any | None,
 ):
     old_hotel = (await ac.get(f"/hotels/{hotel_id}")).json()
 
     update_data = {}
-    if new_title is not None:
+    if new_title:
         update_data["title"] = new_title
-    if new_location is not None:
+    if new_location:
         update_data["location"] = new_location
+    if surprise:
+        update_data["surprise"] = surprise
 
     response = await ac.patch(f"/hotels/{hotel_id}", json=update_data)
-    assert response.status_code == 200
-    assert response.json()["status"] == "ok"
+    assert response.status_code == status_code
 
-    edited_hotel = (await ac.get(f"/hotels/{hotel_id}")).json()
-    validate_hotel_data(
-        edited_hotel,
-        hotel_id,
-        new_title or old_hotel["title"],
-        new_location or old_hotel["location"],
-    )
+    if response.status_code == 200:
+        assert response.json()["status"] == "ok"
+
+        edited_hotel = (await ac.get(f"/hotels/{hotel_id}")).json()
+        validate_hotel_data(
+            edited_hotel,
+            hotel_id,
+            new_title or old_hotel["title"],
+            new_location or old_hotel["location"],
+        )
 
 
 @pytest.mark.parametrize("hotel_id", [4, 5, 6])

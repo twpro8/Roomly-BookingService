@@ -15,11 +15,11 @@ class HotelPATCH(BaseModel):
 
     @model_validator(mode="before")
     def check_at_least_one_field(cls, values):
-        title = values.get('title')
-        location = values.get('location')
+        title = values.get("title")
+        location = values.get("location")
 
         if not title and not location:
-            raise ValueError('At least one of title or location must be provided')
+            raise ValueError("At least one of title or location must be provided")
 
         return values
 

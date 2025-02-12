@@ -94,7 +94,9 @@ async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: int = Path(gt=0,
     <h3>Description</h3>
     You can edit several or all attributes of the hotel.""",
 )
-async def partly_edit_hotel(db: DBDep, hotel_data: HotelPATCH, hotel_id: int = Path(gt=0, lt=2147483647)):
+async def partly_edit_hotel(
+    db: DBDep, hotel_data: HotelPATCH, hotel_id: int = Path(gt=0, lt=2147483647)
+):
     try:
         await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
     except HotelAlreadyExistsException:

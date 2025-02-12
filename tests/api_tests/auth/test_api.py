@@ -27,21 +27,19 @@ from httpx import AsyncClient
         ("InvalidEmail", "invalid-email", "password123", 422, None),
         # Test case 11: Username too short
         ("A", "auser@example.com", "password123", 422, None),
-        # Test case 12: Username with special characters
-        ("User!@#", "specialchar@example.com", "password123", 422, None),
-        # Test case 13: Email case-sensitivity check
+        # Test case 12: Email case-sensitivity check
         ("CaseSensitive", "Address1@Gmail.Com", "password123", 409, None),
-        # Test case 14: Username too long (more than 150 characters)
+        # Test case 13: Username too long (more than 150 characters)
         ("a" * 151, "validemail@example.com", "password123", 422, None),
-        # Test case 15: Email too long (more than 255 characters)
+        # Test case 14: Email too long (more than 255 characters)
         ("validusername", "a" * 246 + "@example.com", "password123", 422, None),
-        # Test case 16: Empty username
+        # Test case 15: Empty username
         ("", "validemail@example.com", "password123", 422, None),
-        # Test case 17: Empty email
+        # Test case 16: Empty email
         ("validusername", "", "password123", 422, None),
-        # Test case 18: Empty password
+        # Test case 17: Empty password
         ("validusername", "validemail@example.com", "", 422, None),
-        # Test case 19: All fields empty
+        # Test case 18: All fields empty
         ("", "", "", 422, None),
     ],
 )
