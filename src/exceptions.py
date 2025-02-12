@@ -34,6 +34,14 @@ class HotelAlreadyExistsException(MomoaException):
     detail = "Hotel already exists"
 
 
+class UsernameAlreadyExistsException(MomoaException):
+    detail = "Username already exists"
+
+
+class EmailAlreadyExistsException(MomoaException):
+    detail = "Email already exists"
+
+
 class MomoaHTTPException(HTTPException):
     status_code = 500
     detail = None
@@ -95,3 +103,13 @@ class UserDoesNotExistException(MomoaException):
 
 class IncorrectPasswordException(MomoaException):
     detail = "Incorrect password"
+
+
+class UsernameAlreadyExistsHTTPException(MomoaHTTPException):
+    status_code = 409
+    detail = "User with the provided username already exists"
+
+
+class EmailAlreadyExistsHTTPException(MomoaHTTPException):
+    status_code = 409
+    detail = "User with the provided email already exists"
