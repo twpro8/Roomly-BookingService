@@ -60,7 +60,7 @@ class HotelService(BaseService):
         self,
         hotel_id: Optional[int] = None,
         location: Optional[str] = None,
-        title: Optional[str] = None
+        title: Optional[str] = None,
     ) -> None:
         if hotel_id:
             try:
