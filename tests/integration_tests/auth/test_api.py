@@ -1,5 +1,8 @@
+from typing import Any
+
 import pytest
 from httpx import AsyncClient
+from pydantic import EmailStr
 
 
 @pytest.mark.parametrize(
@@ -105,3 +108,57 @@ async def test_auth_users(
         # Get current user
         response = await ac.get("/users/me")
         assert response.status_code == 401
+
+
+
+@pytest.mark.parametrize(
+    "username, password, email, bio, status_code, surprise",
+    [
+        (None, None, None, "Hello! My name is Tester1!", 200, None),
+        ("Justin", None, None, None, 200, None),
+        (None, None, None, "Oh no! My name is not Tester1 anymore!", 200, None),
+        ("Unique Boy", "123123123", "unique_boy@gmail.com", "Hello there!", 422, "Boooo!"),
+        ("Unique Boy", "123123123", "unique_boy@gmail.com", "Hello there!", 200, None),
+        (None, None, None, None, 422, None),
+        ("a" * 20, None, None, None, 200, None),
+        ("b" * 21, None, None, None, 422, None),
+        (None, "c" * 50, None, None, 200, None),
+        (None, "d" * 51, None, None, 422, None),
+        (None, None, None, "e" * 100, 200, None),
+        (None, None, None, "f" * 101, 422, None),
+        (111, None, None, None, 422, None),
+        ("12345", None, None, None, 200, None),
+        ("1234", None, None, None, 422, None),
+        (None, "123456", None, None, 200, None),
+        (None, "12345", None, None, 422, None),
+        (None, None, None, "12", 200, None),
+        (None, None, None, "1", 422, None),
+    ]
+)
+async def test_partly_edit_user(
+    authed_ac: AsyncClient,
+    username: str | None,
+    password: str | None,
+    email: EmailStr | None,
+    bio: str | None,
+    status_code: int,
+    surprise: Any | None,
+):
+    request_json={}
+    if username:
+        request_json["username"] = username
+    if password:
+        request_json["password"] = password
+    if email:
+        request_json["email"] = email
+    if bio:
+        request_json["bio"] = bio
+    if surprise:
+        request_json["surprise"] = surprise
+
+    old_user = (await authed_ac.get("/users/me")).json()
+    response = await authed_ac.patch("/users/me", json=request_json)
+    assert response.status_code == status_code
+
+    if response.status_code == 200:
+        assert old_user != response.json()
