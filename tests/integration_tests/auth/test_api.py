@@ -110,7 +110,6 @@ async def test_auth_users(
         assert response.status_code == 401
 
 
-
 @pytest.mark.parametrize(
     "username, password, email, bio, status_code, surprise",
     [
@@ -133,7 +132,7 @@ async def test_auth_users(
         (None, "12345", None, None, 422, None),
         (None, None, None, "12", 200, None),
         (None, None, None, "1", 422, None),
-    ]
+    ],
 )
 async def test_partly_edit_user(
     authed_ac: AsyncClient,
@@ -144,7 +143,7 @@ async def test_partly_edit_user(
     status_code: int,
     surprise: Any | None,
 ):
-    request_json={}
+    request_json = {}
     if username:
         request_json["username"] = username
     if password:

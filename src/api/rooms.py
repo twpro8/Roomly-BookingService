@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Body, Query, Path
+from fastapi import APIRouter, Body, Query
 
 from src.exceptions import (
     RoomNotFoundHTTPException,
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/hotels", tags=["Rooms"])
 @router.get("/{hotel_id}/rooms")
 async def get_rooms(
     db: DBDep,
-    hotel_id: int = Path(gt=0),
+    hotel_id: TypeID,
     date_from: date = Query(example="2025-07-01"),
     date_to: date = Query(example="2025-07-07"),
 ):

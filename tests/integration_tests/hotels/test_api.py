@@ -72,7 +72,7 @@ async def test_add_hotel(
     ac, title: str, location: str, status_code: int | None, surprise: Any | None
 ):
     request_json = {"title": title, "location": location}
-    if surprise:
+    if surprise is not None:
         request_json["surprise"] = surprise
 
     response = await ac.post("/hotels", json=request_json)
@@ -128,7 +128,7 @@ async def test_edit_hotel(
     surprise: Any | None,
 ):
     request_json = {"title": new_title, "location": new_location}
-    if surprise:
+    if surprise is not None:
         request_json["surprise"] = surprise
 
     response = await ac.put(f"/hotels/{hotel_id}", json=request_json)
@@ -164,11 +164,13 @@ async def test_edit_hotel(
         # Test case 9: Hotel not found
         (1024, "New grate Title", "One More New Location", 404, None),
         # Test case 10: Empty title
-        (5, "", "Somewhere else.. New", 200, None),
+        (5, "", "Somewhere else.. New", 422, None),
+        (5, None, "Somewhere else.. New", 200, None),
         # Test case 11: Empty title and location
         (6, "", "", 422, None),
         # Test case 12: Empty location
-        (4, "New is New", "", 200, None),
+        (4, "New is New", "", 422, None),
+        (4, "New is New", None, 200, None),
         # Test case 13: Invalid location (numeric)
         (5, "Title is New", 1, 422, None),
         # Test case 14: Missing all
@@ -186,11 +188,11 @@ async def test_partly_edit_hotel(
     old_hotel = (await ac.get(f"/hotels/{hotel_id}")).json()
 
     update_data = {}
-    if new_title:
+    if new_title is not None:
         update_data["title"] = new_title
-    if new_location:
+    if new_location is not None:
         update_data["location"] = new_location
-    if surprise:
+    if surprise is not None:
         update_data["surprise"] = surprise
 
     response = await ac.patch(f"/hotels/{hotel_id}", json=update_data)
