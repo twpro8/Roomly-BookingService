@@ -61,11 +61,12 @@ async def test_get_room(ac: AsyncClient, hotel_id: int, room_id: int, status_cod
     "hotel_id, title, description, price, quantity, facilities_ids, status_code, surprise",
     [
         (1, "Free Quero 1", "The best place for you", 1, 5, [], 200, None),
-        (1, "Free Quero 1", "The best place for you", 1, 5, [], 422, "Surprise!"),
-        (1, "Free Quero 2", None, 1, 5, None, 200, None),
-        (111, "Free Quero 3", None, 1, 5, None, 404, None),
-        (2, "Free Quero 4", None, 0, 5, None, 422, None),
-        (2, "Free Quero 4", None, 1, 0, None, 422, None),
+        (1, "Free Quero 1", None, 700, 2, [], 409, None),
+        (1, "Free Quero 2", "The best place for you", 1, 5, [], 422, "Surprise!"),
+        (1, "Free Quero 3", None, 1, 5, None, 200, None),
+        (111, "Free Quero 4", None, 1, 5, None, 404, None),
+        (2, "Free Quero 5", None, 0, 5, None, 422, None),
+        (2, "Free Quero 5", None, 1, 0, None, 422, None),
     ],
 )
 async def test_add_room(

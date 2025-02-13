@@ -4,6 +4,7 @@ from src.exceptions import (
     check_date_to_after_date_from,
     ObjectNotFoundException,
     RoomNotFoundException,
+    RoomAlreadyExistsException,
 )
 from src.schemas.facilities import RoomFacilityAdd
 from src.schemas.rooms import RoomAddRequest, RoomAdd, RoomPatchRequest, RoomPatch, Room
@@ -31,6 +32,10 @@ class RoomService(BaseService):
         hotel_id: int,
         room_data: RoomAddRequest,
     ):
+        existing_room = await self.db.rooms.get_one_or_none(hotel_id=hotel_id, title=room_data.title)
+        if existing_room:
+            raise RoomAlreadyExistsException
+
         await HotelService(self.db).check_hotel_exists(hotel_id=hotel_id)
         _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
         room = await self.db.rooms.add(_room_data)

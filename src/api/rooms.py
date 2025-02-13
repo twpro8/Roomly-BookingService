@@ -7,6 +7,8 @@ from src.exceptions import (
     HotelNotFoundHTTPException,
     HotelNotFoundException,
     RoomNotFoundException,
+    RoomAlreadyExistsException,
+    RoomAlreadyExistsHTTPException,
 )
 from src.schemas.rooms import RoomAddRequest, RoomPatchRequest
 from src.api.dependencies import DBDep
@@ -41,6 +43,8 @@ async def add_room(db: DBDep, hotel_id: TypeID, room_data: RoomAddRequest = Body
         room = await RoomService(db).creat_room(hotel_id, room_data)
     except HotelNotFoundException:
         raise HotelNotFoundHTTPException
+    except RoomAlreadyExistsException:
+        raise RoomAlreadyExistsHTTPException
     return {"status": "ok", "data": room}
 
 
