@@ -1,12 +1,11 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 
 class HotelAdd(BaseModel):
     title: str = Field(min_length=5, max_length=100)
     location: str = Field(min_length=5, max_length=100)
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class HotelPATCH(BaseModel):
@@ -23,8 +22,7 @@ class HotelPATCH(BaseModel):
 
         return values
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class Hotel(HotelAdd):

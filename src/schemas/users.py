@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator, ConfigDict
 
 
 class User(BaseModel):
@@ -13,8 +13,7 @@ class UserRequestAdd(BaseModel):
     email: EmailStr = Field(max_length=50)
     password: str = Field(min_length=6, max_length=50)
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class AddUser(BaseModel):
@@ -31,8 +30,7 @@ class UserLogin(BaseModel):
     username: str = Field(min_length=5, max_length=20)
     password: str = Field(min_length=6, max_length=50)
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class UserPatchRequest(BaseModel):
@@ -53,8 +51,7 @@ class UserPatchRequest(BaseModel):
 
         return values
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class UserPatch(BaseModel):

@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class BookingAddRequest(BaseModel):
@@ -7,8 +7,7 @@ class BookingAddRequest(BaseModel):
     date_from: date
     date_to: date
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class BookingAdd(BaseModel):

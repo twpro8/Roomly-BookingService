@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from src.schemas.facilities import Facility
 
@@ -10,8 +10,7 @@ class RoomAddRequest(BaseModel):
     quantity: int = Field(default=1, gt=0, lt=1000)
     facilities_ids: list[int] = []
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class RoomAdd(BaseModel):
@@ -29,8 +28,7 @@ class RoomPatchRequest(BaseModel):
     quantity: int | None = Field(default=None, gt=0, lt=1000)
     facilities_ids: list[int] = []
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
 
 class RoomPatch(BaseModel):

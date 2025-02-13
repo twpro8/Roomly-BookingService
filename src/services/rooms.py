@@ -32,7 +32,9 @@ class RoomService(BaseService):
         hotel_id: int,
         room_data: RoomAddRequest,
     ):
-        existing_room = await self.db.rooms.get_one_or_none(hotel_id=hotel_id, title=room_data.title)
+        existing_room = await self.db.rooms.get_one_or_none(
+            hotel_id=hotel_id, title=room_data.title
+        )
         if existing_room:
             raise RoomAlreadyExistsException
 
