@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 
 from src.schemas.facilities import Facility
 
@@ -27,6 +27,19 @@ class RoomPatchRequest(BaseModel):
     price: int | None = Field(default=None, gt=0, lt=1000000)
     quantity: int | None = Field(default=None, gt=0, lt=1000)
     facilities_ids: list[int] = []
+
+    @model_validator(mode="before")
+    def check_at_least_one_field(cls, values):
+        title = values.get("title")
+        description = values.get("description")
+        price = values.get("price")
+        quantity = values.get("quantity")
+        facilities_ids = values.get("facilities_ids")
+
+        if not any((title, description, price, quantity, facilities_ids)):
+            raise ValueError("At least one of title or location must be provided")
+
+        return values
 
     model_config = ConfigDict(extra="forbid")
 
