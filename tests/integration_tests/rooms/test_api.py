@@ -112,7 +112,7 @@ async def test_add_room(
     [
         (
             1,
-            4,
+            1,
             "PUT_New Room Title 1",
             "PUT_New Room Descr.",
             100,
@@ -134,7 +134,7 @@ async def test_add_room(
         ),
         (
             1,
-            4,
+            1,
             "PUT_New Title Only",
             None,
             1100,
@@ -153,17 +153,17 @@ async def test_add_room(
             },
             None,
         ),
-        (999, 4, "PUT_New Room Title", "PUT_New Room Descr.", 100, 3, [2, 3, 4], 404, None, None),
+        (999, 1, "PUT_New Room Title", "PUT_New Room Descr.", 100, 3, [2, 3, 4], 404, None, None),
         (1, 999, "PUT_New Room Title", "PUT_New Room Descr.", 100, 3, [2, 3, 4], 404, None, None),
-        (1, 4, "", "PUT_New Room Descr.", 100, 3, [2, 3, 4], 422, None, None),
-        (1, 3, "PUT_New Title", "PUT_New Descr.", 1200, 3, [2, 3, 4], 422, None, "Surprise!"),
-        (1, 4, "g" * 50, "PUT_New Descr.", 1200, 2, [2, 3, 4], 200, None, None),
-        (1, 4, "h" * 51, "PUT_New Descr.", 1200, 2, [2, 3, 4], 422, None, None),
-        (1, 4, "PUT_New Title", "s" * 50, 1200, 2, [2, 3, 4], 200, None, None),
-        (1, 4, "PUT_New Title", "d" * 51, 1200, 2, [2, 3, 4], 422, None, None),
-        (1, 4, "New Room Title", "New Room Descr.", -100, 3, [2, 3, 4], 422, None, None),
-        (1, 4, None, None, 1300, 3, [2, 3, 4], 422, None, None),
-        (1, 4, "New Room Title", "New Room Descr.", 100, 3, ["not_an_int", 3, 4], 422, None, None),
+        (1, 1, "", "PUT_New Room Descr.", 100, 3, [2, 3, 4], 422, None, None),
+        (1, 1, "PUT_New Title", "PUT_New Descr.", 1200, 3, [2, 3, 4], 422, None, "Surprise!"),
+        (1, 1, "g" * 50, "PUT_New Descr.", 1200, 2, [2, 3, 4], 200, None, None),
+        (1, 1, "h" * 51, "PUT_New Descr.", 1200, 2, [2, 3, 4], 422, None, None),
+        (1, 1, "PUT_New Title", "s" * 50, 1200, 2, [2, 3, 4], 200, None, None),
+        (1, 1, "PUT_New Title", "d" * 51, 1200, 2, [2, 3, 4], 422, None, None),
+        (1, 1, "New Room Title", "New Room Descr.", -100, 3, [2, 3, 4], 422, None, None),
+        (1, 1, None, None, 1300, 3, [2, 3, 4], 422, None, None),
+        (1, 1, "New Room Title", "New Room Descr.", 100, 3, ["not_an_int", 3, 4], 422, None, None),
     ],
 )
 async def test_edit_room(
@@ -217,8 +217,8 @@ async def test_edit_room(
     surprise""",
     [
         (
-            1,
-            4,
+            2,
+            3,
             "New Room Title 1",
             "New Room Descr.",
             100,
@@ -238,10 +238,10 @@ async def test_edit_room(
             },
             None,
         ),
-        (1, 4, "New Title Only", None, None, None, None, 200, {"title": "New Title Only"}, None),
+        (2, 3, "New Title Only", None, None, None, None, 200, {"title": "New Title Only"}, None),
         (
-            1,
-            4,
+            2,
+            3,
             None,
             "New Description Only",
             None,
@@ -251,8 +251,8 @@ async def test_edit_room(
             {"description": "New Description Only"},
             None,
         ),
-        (1, 4, None, None, 200, None, None, 200, {"price": 200}, None),
-        (1, 4, None, None, None, 5, None, 200, {"quantity": 5}, None),
+        (2, 3, None, None, 200, None, None, 200, {"price": 200}, None),
+        (2, 3, None, None, None, 5, None, 200, {"quantity": 5}, None),
         (
             999,
             4,
@@ -277,22 +277,22 @@ async def test_edit_room(
             {"detail": "Room not found"},
             None,
         ),
-        (1, 4, "", "New Description", 100, 3, [2, 3, 4], 422, None, None),
-        (1, 4, "New Title", "New Description", -100, 3, [2, 3, 4], 422, None, None),
-        (1, 4, None, None, None, None, None, 422, None, None),
-        (1, 4, "New Title", "New Description", 100, 3, ["not_an_int", 3, 4], 422, None, None),
-        (1, 4, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, "Boooo!"),
-        (1, 4, "1" * 50, None, None, None, None, 200, None, None),
-        (1, 4, "2" * 51, None, None, None, None, 422, None, None),
-        (1, 4, None, "3" * 50, None, None, None, 200, None, None),
-        (1, 4, None, "4" * 51, None, None, None, 422, None, None),
-        (0, 4, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
-        (1, 0, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
-        (9999999999, 4, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
-        (1, 9999999999, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
+        (2, 3, "", "New Description", 100, 3, [2, 3, 4], 422, None, None),
+        (2, 3, "New Title", "New Description", -100, 3, [2, 3, 4], 422, None, None),
+        (2, 3, None, None, None, None, None, 422, None, None),
+        (2, 3, "New Title", "New Description", 100, 3, ["not_an_int", 3, 4], 422, None, None),
+        (2, 3, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, "Boooo!"),
+        (2, 3, "1" * 50, None, None, None, None, 200, None, None),
+        (2, 3, "2" * 51, None, None, None, None, 422, None, None),
+        (2, 3, None, "3" * 50, None, None, None, 200, None, None),
+        (2, 3, None, "4" * 51, None, None, None, 422, None, None),
+        (0, 3, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
+        (2, 0, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
+        (9999999999, 3, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
+        (2, 9999999999, "New Title", "New Description", 100, 3, [2, 3, 4], 422, None, None),
         (
-            1,
-            4,
+            2,
+            3,
             "Just New Title",
             "Just New Descr.",
             100,
@@ -349,8 +349,6 @@ async def test_partly_edit_room(
         assert room_response.status_code == 200
         updated_room_data = room_response.json()
 
-        print(updated_room_data.get("facilities"))
-
         if response_json:
             for key, value in response_json.items():
                 assert updated_room_data.get(key) == value
@@ -359,7 +357,33 @@ async def test_partly_edit_room(
         assert response.json() == response_json
 
 
-# @pytest.mark.parametrize("hotel_id, room_id, status_code")
-# async def test_delete_room(ac: AsyncClient, hotel_id: int, room_id: int, status_code: int):
-#     response = await ac.post(f"/hotels/{hotel_id}/rooms/{room_id}")
-#     ...
+@pytest.mark.parametrize(
+    "hotel_id, room_id, status_code, response_json",
+    [
+        (3, 4, 200, {"status": "ok"}),
+        (999, 4, 404, {"detail": "Hotel not found"}),
+        (3, 999, 404, {"detail": "Room not found"}),
+        (3, 4, 404, {"detail": "Room not found"}),
+        (0, 4, 422, None),
+        (3, 0, 422, None),
+        (3, 9999999999999, 422, None),
+        (9999999999999, 4, 422, None),
+    ],
+)
+async def test_delete_room(
+    ac: AsyncClient, hotel_id: int, room_id: int, status_code: int, response_json: dict | None
+):
+    response = await ac.delete(f"/hotels/{hotel_id}/rooms/{room_id}")
+
+    assert response.status_code == status_code
+
+    if response_json:
+        assert response.json() == response_json
+
+    if status_code == 200:
+        get_response = await ac.get(f"/hotels/{hotel_id}/rooms/{room_id}")
+        assert get_response.status_code == 404
+        assert get_response.json() == {"detail": "Room not found"}
+
+    elif response_json:
+        assert response.json() == response_json

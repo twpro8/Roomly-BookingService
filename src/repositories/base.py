@@ -72,3 +72,8 @@ class BaseRepository:
     async def delete(self, **filter_by) -> None:
         stmt = delete(self.model).filter_by(**filter_by)
         await self.session.execute(stmt)
+
+    async def check_exists(self, **filter_by) -> bool:
+        query = select(self.model).filter_by(**filter_by)
+        res = await self.session.execute(query)
+        return res.scalars().first() is not None
