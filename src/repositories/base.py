@@ -6,7 +6,10 @@ from sqlalchemy import insert, select, update, delete
 from pydantic import BaseModel
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
-from src.exceptions import ObjectNotFoundException, ObjectAlreadyExistsException
+from src.exceptions import (
+    ObjectNotFoundException,
+    ObjectAlreadyExistsException,
+)
 from src.repositories.mappers.base import DataMapper
 
 
@@ -72,8 +75,3 @@ class BaseRepository:
     async def delete(self, **filter_by) -> None:
         stmt = delete(self.model).filter_by(**filter_by)
         await self.session.execute(stmt)
-
-    async def check_exists(self, **filter_by) -> bool:
-        query = select(self.model).filter_by(**filter_by)
-        res = await self.session.execute(query)
-        return res.scalars().first() is not None
