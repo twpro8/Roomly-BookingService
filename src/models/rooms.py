@@ -1,6 +1,6 @@
 import typing
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
@@ -15,7 +15,7 @@ class RoomsORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id", ondelete="CASCADE"))
     title: Mapped[str]
-    description: Mapped[str | None]
+    description: Mapped[str | None] = mapped_column(String(200), nullable=True, default=None)
     price: Mapped[int]
     quantity: Mapped[int]
 
