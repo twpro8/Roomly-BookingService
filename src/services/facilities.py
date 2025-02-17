@@ -1,3 +1,4 @@
+from src.exceptions import ObjectNotFoundException, FacilityNotFoundException
 from src.schemas.facilities import FacilityAddRequest
 from src.services.base import BaseService
 from src.tasks.tasks import test_task
@@ -12,3 +13,11 @@ class FacilityService(BaseService):
         await self.db.commit()
         test_task.delay()
         return facility
+
+    async def delete_facility(self, facility_id: int) -> None:
+        try:
+            await self.db.facilities.get_one(id=facility_id)
+        except ObjectNotFoundException:
+            raise FacilityNotFoundException
+        await self.db.facilities.delete(id=facility_id)
+        await self.db.commit()

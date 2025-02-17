@@ -2,6 +2,8 @@
 import pytest
 from unittest import mock
 
+from src.schemas.facilities import FacilityAddRequest
+
 mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func).start()
 
 
@@ -46,10 +48,14 @@ async def setup_database(check_test_mode):
 
     hotels_data = [HotelAdd.model_validate(hotel) for hotel in read_json("mock_hotels")]
     rooms_data = [RoomAdd.model_validate(room) for room in read_json("mock_rooms")]
+    facilities_data = [
+        FacilityAddRequest.model_validate(facility) for facility in read_json("mock_facilities")
+    ]
 
     async with DBManager(session_factory=null_pool_session_maker) as db_:
         await db_.hotels.add_bulk(hotels_data)
         await db_.rooms.add_bulk(rooms_data)
+        await db_.facilities.add_bulk(facilities_data)
         await db_.commit()
 
 

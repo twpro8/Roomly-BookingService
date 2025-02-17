@@ -14,6 +14,10 @@ class ObjectNotFoundException(MomoaException):
     detail = "Object not found"
 
 
+class FacilityNotFoundException(ObjectNotFoundException):
+    detail = "Facility not found"
+
+
 class NoAvailableRoomsException(MomoaException):
     detail = "No rooms left"
 
