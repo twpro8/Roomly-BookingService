@@ -1,8 +1,8 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class FacilityAddRequest(BaseModel):
-    title: str
+    title: str = Field(min_length=2, max_length=100)
 
     model_config = ConfigDict(extra="forbid")
 

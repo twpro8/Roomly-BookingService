@@ -126,3 +126,8 @@ class EmailAlreadyExistsHTTPException(MomoaHTTPException):
 class RoomAlreadyExistsHTTPException(MomoaHTTPException):
     status_code = 409
     detail = "Room with the provided title already exists"
+
+
+class FacilityNotFoundHTTPException(MomoaHTTPException):
+    status_code = 404
+    detail = "Facility not found"

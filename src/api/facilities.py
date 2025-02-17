@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body
 from fastapi_cache.decorator import cache
 
+from src.exceptions import FacilityNotFoundException, FacilityNotFoundHTTPException
 from src.schemas.facilities import FacilityAddRequest
 from src.api.dependencies import DBDep
 from src.services.facilities import FacilityService
@@ -24,5 +25,8 @@ async def add_facility(db: DBDep, facility_data: FacilityAddRequest = Body()):
 
 @router.delete("/{facility_id}")
 async def delete_facility(db: DBDep, facility_id: TypeID):
-    await FacilityService(db).delete_facility(facility_id)
+    try:
+        await FacilityService(db).delete_facility(facility_id)
+    except FacilityNotFoundException:
+        raise FacilityNotFoundHTTPException
     return {"status": "ok"}
