@@ -76,7 +76,7 @@ async def test_get_facilities(ac: AsyncClient) -> None:
         (-5, 422),
         (9999999999, 422),
         (13, 200),
-    ]
+    ],
 )
 async def test_delete_facility(ac: AsyncClient, f_id: int, status_code: int) -> None:
     response = await ac.delete(f"/facilities/{f_id}")
@@ -89,4 +89,6 @@ async def test_delete_facility(ac: AsyncClient, f_id: int, status_code: int) -> 
         current_facilities = get_current_facilities.json()
         is_deleted = next((f for f in current_facilities if f["id"] == f_id), None)
 
-        assert is_deleted is None, f"Facility with id {f_id} was not deleted or still exists in the list"
+        assert is_deleted is None, (
+            f"Facility with id {f_id} was not deleted or still exists in the list"
+        )
