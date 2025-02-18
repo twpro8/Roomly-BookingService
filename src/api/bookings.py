@@ -6,17 +6,14 @@ from src.exceptions import (
     RoomNotFoundHTTPException,
     NoAvailableRoomsHTTPException,
     RoomNotFoundException,
+    BookingNotFoundException,
+    BookingNotFoundHTTPException,
 )
 from src.schemas.bookings import BookingAddRequest
 from src.api.dependencies import DBDep, UserIdDep
 from src.services.bookings import BookingService
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
-
-
-@router.get("")
-async def get_bookings(db: DBDep):
-    return await BookingService(db).get_bookings()
 
 
 @router.get("/me")
@@ -79,7 +76,10 @@ async def add_booking(
     return {"status": "ok", "data": booking}
 
 
-@router.delete("{booking_id}")
-async def delete_booking(db: DBDep, booking_id: TypeID):
-    await BookingService(db).delete_booking(booking_id)
+@router.delete("/{booking_id}")
+async def delete_booking(db: DBDep, user_id: UserIdDep, booking_id: TypeID):
+    try:
+        await BookingService(db).delete_booking(user_id, booking_id)
+    except BookingNotFoundException:
+        raise BookingNotFoundHTTPException
     return {"status": "ok"}
