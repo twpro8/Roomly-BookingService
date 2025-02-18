@@ -14,6 +14,10 @@ class ObjectNotFoundException(MomoaException):
     detail = "Object not found"
 
 
+class BookingNotFoundException(ObjectNotFoundException):
+    detail = "Booking not found"
+
+
 class FacilityNotFoundException(ObjectNotFoundException):
     detail = "Facility not found"
 
@@ -131,3 +135,8 @@ class RoomAlreadyExistsHTTPException(MomoaHTTPException):
 class FacilityNotFoundHTTPException(MomoaHTTPException):
     status_code = 404
     detail = "Facility not found"
+
+
+class BookingNotFoundHTTPException(MomoaHTTPException):
+    status_code = 404
+    detail = "Booking not found"
