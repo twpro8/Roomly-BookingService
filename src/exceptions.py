@@ -54,6 +54,14 @@ class EmailAlreadyExistsException(MomoaException):
     detail = "Email already exists"
 
 
+class ImageTooLargeException(MomoaException):
+    detail = "Image too large"
+
+
+class UnsupportedImageFormatException(MomoaException):
+    detail = "Unsupported image format"
+
+
 class MomoaHTTPException(HTTPException):
     status_code = 500
     detail = None
@@ -140,3 +148,13 @@ class FacilityNotFoundHTTPException(MomoaHTTPException):
 class BookingNotFoundHTTPException(MomoaHTTPException):
     status_code = 404
     detail = "Booking not found"
+
+
+class ImageTooLargeHTTPException(MomoaHTTPException):
+    status_code = 413
+    detail = "Image too large. Max size cannot be greater than 5 MB"
+
+
+class UnsupportedImageFormatHTTPException(MomoaHTTPException):
+    detail = "Unsupported image format. Required Jpeg or PNG only."
+    status_code = 415

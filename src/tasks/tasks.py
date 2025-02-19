@@ -11,7 +11,7 @@ from src.utils.db_manager import DBManager
 
 @celery_instance.task
 def resize_image(image_path: str):
-    logging.debug("The image_path function is called")
+    logging.debug("The resize_image function is called")
     sizes = [500, 200]
     output_folder = "src/static/images"
     img = Image.open(image_path)

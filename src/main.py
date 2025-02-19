@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     await redis_manager.close()
 
 
-app = FastAPI(title="Momoa Web API", lifespan=lifespan)
+app = FastAPI(title="Roomly–BookingService", lifespan=lifespan)
 app.include_router(auth_router)
 app.include_router(hotels_router)
 app.include_router(rooms_router)
