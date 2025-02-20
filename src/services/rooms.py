@@ -49,7 +49,8 @@ class RoomService(BaseService):
         return room
 
     async def edit_room(self, hotel_id: int, room_id: int, room_data: RoomAddRequest) -> None:
-        await self.db.rooms.check_hotel_and_room_exists(hotel_id, room_id)
+        await self.db.hotels.get_hotel(id=hotel_id)
+        await self.db.rooms.get_room(id=room_id, hotel_id=hotel_id)
         _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
         await self.db.rooms.edit(_room_data, id=room_id)
         await self.db.rooms_facilities.add_facilities(
@@ -60,7 +61,8 @@ class RoomService(BaseService):
     async def partly_edit_room(
         self, hotel_id: int, room_id: int, room_data: RoomPatchRequest
     ) -> None:
-        await self.db.rooms.check_hotel_and_room_exists(hotel_id, room_id)
+        await self.db.hotels.get_hotel(id=hotel_id)
+        await self.db.rooms.get_room(id=room_id, hotel_id=hotel_id)
         _model_dump = room_data.model_dump(exclude_unset=True)
         _room_data = RoomPatch(hotel_id=hotel_id, **_model_dump)
         await self.db.rooms.edit(_room_data, exclude_unset=True, id=room_id, hotel_id=hotel_id)
@@ -71,6 +73,7 @@ class RoomService(BaseService):
         await self.db.commit()
 
     async def delete_room(self, hotel_id: int, room_id: int) -> None:
-        await self.db.rooms.check_hotel_and_room_exists(hotel_id, room_id)
+        await self.db.hotels.get_hotel(id=hotel_id)
+        await self.db.rooms.get_room(id=room_id, hotel_id=hotel_id)
         await self.db.rooms.delete(id=room_id, hotel_id=hotel_id)
         await self.db.commit()

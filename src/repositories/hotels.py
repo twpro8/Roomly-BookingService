@@ -1,7 +1,9 @@
 from datetime import date
 
 from sqlalchemy import select, func
+from sqlalchemy.exc import NoResultFound
 
+from src.exceptions import HotelNotFoundException
 from src.repositories.base import BaseRepository
 from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
@@ -39,3 +41,12 @@ class HotelsRepository(BaseRepository):
         res = await self.session.execute(query)
 
         return [self.mapper.map_to_domain_entity(hotel) for hotel in res.scalars().all()]
+
+    async def get_hotel(self, **filter_by):
+        query = select(self.model).filter_by(**filter_by)
+        res = await self.session.execute(query)
+        try:
+            model = res.scalar_one()
+        except NoResultFound:
+            raise HotelNotFoundException
+        return self.mapper.map_to_domain_entity(model)
