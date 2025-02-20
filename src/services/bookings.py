@@ -1,4 +1,10 @@
-from src.exceptions import ObjectNotFoundException, RoomNotFoundException, BookingNotFoundException
+from src.exceptions import (
+    ObjectNotFoundException,
+    RoomNotFoundException,
+    BookingNotFoundException,
+    HotelNotFoundException,
+    NoAvailableRoomsException,
+)
 from src.schemas.bookings import BookingAddRequest, BookingAdd, Booking
 from src.services.base import BaseService
 
@@ -12,13 +18,26 @@ class BookingService(BaseService):
 
     async def create_booking(self, user_id: int, booking_data: BookingAddRequest) -> Booking:
         try:
-            room = await self.db.rooms.get_one(id=booking_data.room_id)
-        except ObjectNotFoundException:
+            await self.db.hotels.get_hotel(id=booking_data.hotel_id)
+            room = await self.db.rooms.get_room(
+                id=booking_data.room_id, hotel_id=booking_data.hotel_id
+            )
+            new_data = BookingAdd(
+                user_id=user_id,
+                room_id=booking_data.room_id,
+                date_from=booking_data.date_from,
+                date_to=booking_data.date_to,
+                price=room.price,
+            )
+            booking = await self.db.bookings.add_booking(new_data, hotel_id=booking_data.hotel_id)
+        except HotelNotFoundException:
+            raise HotelNotFoundException
+        except RoomNotFoundException:
             raise RoomNotFoundException
-        _booking_data = BookingAdd(user_id=user_id, price=room.price, **booking_data.model_dump())
-        booking = await self.db.bookings.add_booking(_booking_data, hotel_id=room.hotel_id)
-        await self.db.commit()
+        except NoAvailableRoomsException:
+            raise NoAvailableRoomsException
 
+        await self.db.commit()
         return booking
 
     async def delete_booking(self, user_id: int, booking_id: int) -> None:

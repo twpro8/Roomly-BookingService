@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class BookingAddRequest(BaseModel):
+    hotel_id: int = Field(gt=0, lt=2147483647)
     room_id: int = Field(gt=0, lt=2147483647)
     date_from: date
     date_to: date
