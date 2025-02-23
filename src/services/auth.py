@@ -67,7 +67,17 @@ class AuthService(BaseService):
             raise UserDoesNotExistException
         if not self.verify_password(data.password, user.hashed_password):
             raise IncorrectPasswordException
-        return self.create_access_token({"user_id": user.id})
+        my_bookings = await self.db.bookings.get_filtered(user_id=user.id)
+        my_bookings_ids = [booking.id for booking in my_bookings]
+        access_token = self.create_access_token(
+            {
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "my_bookings_ids": my_bookings_ids,
+            }
+        )
+        return access_token
 
     async def get_me(self, user_id: int):
         return await self.db.users.get_one_or_none(id=user_id)
