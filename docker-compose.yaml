@@ -3,10 +3,10 @@ services:
     container_name: 'booking_backend'
     build:
       context: .
-#    ports:
-#      - "7878:8000"
+    ports:
+      - "7878:8000"
     networks:
-      - momoa-network
+      - roomly-network
     env_file:
       - .env
 
@@ -15,7 +15,7 @@ services:
     build:
       context: .
     networks:
-      - momoa-network
+      - roomly-network
     env_file:
       - .env
     command: "celery --app=src.tasks.celery_app:celery_instance worker -l INFO"
@@ -25,11 +25,11 @@ services:
     build:
       context: .
     networks:
-      - momoa-network
+      - roomly-network
     env_file:
       - .env
     command: "celery --app=src.tasks.celery_app:celery_instance beat -l INFO"
 
 networks:
-  momoa-network:
+  roomly-network:
     external: true
