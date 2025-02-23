@@ -30,6 +30,10 @@ class ObjectAlreadyExistsException(MomoaException):
     detail = "Object already exists"
 
 
+class FacilityAlreadyExistsException(ObjectAlreadyExistsException):
+    detail = "Facility already exists"
+
+
 class HotelNotFoundException(ObjectNotFoundException):
     detail = "Hotel not found"
 
@@ -158,3 +162,8 @@ class ImageTooLargeHTTPException(MomoaHTTPException):
 class UnsupportedImageFormatHTTPException(MomoaHTTPException):
     detail = "Unsupported image format. Required Jpeg or PNG only."
     status_code = 415
+
+
+class FacilityAlreadyExistsHTTPException(MomoaHTTPException):
+    status_code = 409
+    detail = "Facility already exists"

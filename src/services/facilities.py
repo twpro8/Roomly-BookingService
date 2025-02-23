@@ -1,4 +1,9 @@
-from src.exceptions import ObjectNotFoundException, FacilityNotFoundException
+from src.exceptions import (
+    ObjectNotFoundException,
+    FacilityNotFoundException,
+    ObjectAlreadyExistsException,
+    FacilityAlreadyExistsException,
+)
 from src.schemas.facilities import FacilityAddRequest
 from src.services.base import BaseService
 from src.tasks.tasks import test_task
@@ -9,7 +14,10 @@ class FacilityService(BaseService):
         return await self.db.facilities.get_all()
 
     async def add_facility(self, data: FacilityAddRequest):
-        facility = await self.db.facilities.add(data)
+        try:
+            facility = await self.db.facilities.add(data)
+        except ObjectAlreadyExistsException:
+            raise FacilityAlreadyExistsException
         await self.db.commit()
         test_task.delay()
         return facility
