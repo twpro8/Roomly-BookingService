@@ -1,6 +1,9 @@
 
 stages:
   - build
+  - lint_format
+  - migrations
+  - tests
   - deploy
 
 build-job:
@@ -10,6 +13,26 @@ build-job:
     - cp ${TEST_ENV} .env-test
   script:
     - docker build -t booking-api-image .
+
+lint-job:
+  stage: lint_format
+  script:
+    - docker run --rm --network roomly-network booking-api-image ruff check
+
+format-job:
+  stage: lint_format
+  script:
+    - docker run --rm --network roomly-network booking-api-image ruff format --check
+
+migrations-job:
+  stage: migrations
+  script:
+    - docker run --rm --network roomly-network booking-api-image alembic upgrade head
+
+tests-job:
+  stage: tests
+  script:
+    - docker run --rm --network roomly-network booking-api-image pytest
 
 deploy-job:
   stage: deploy
