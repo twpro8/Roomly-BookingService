@@ -4,48 +4,48 @@ from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
 from src.models.users import UsersORM
 from src.repositories.mappers.base import DataMapper
-from src.schemas.bookings import Booking
-from src.schemas.facilities import Facility, RoomFacility
-from src.schemas.hotels import Hotel
-from src.schemas.rooms import Room, RoomWithRels
-from src.schemas.users import User, UserWithHashedPassword
+from src.schemas.bookings import BookingDTO
+from src.schemas.facilities import FacilityDTO, RoomFacilityDTO
+from src.schemas.hotels import HotelDTO
+from src.schemas.rooms import RoomDTO, RoomWithRelsDTO
+from src.schemas.users import UserDTO, UserWithHashedPasswordDTO
 
 
 class HotelDataMapper(DataMapper):
     db_model = HotelsORM
-    schema = Hotel
+    schema = HotelDTO
 
 
 class RoomDataMapper(DataMapper):
     db_model = RoomsORM
-    schema = Room
+    schema = RoomDTO
 
 
 class RoomWithRelsDataMapper(DataMapper):
     db_model = RoomsORM
-    schema = RoomWithRels
+    schema = RoomWithRelsDTO
 
 
 class UserDataMapper(DataMapper):
     db_model = UsersORM
-    schema = User
+    schema = UserDTO
 
 
 class UserWithHashedPasswordDataMapper(DataMapper):
     db_model = UsersORM
-    schema = UserWithHashedPassword
+    schema = UserWithHashedPasswordDTO
 
 
 class BookingDataMapper(DataMapper):
     db_model = BookingsORM
-    schema = Booking
+    schema = BookingDTO
 
 
 class FacilityDataMapper(DataMapper):
     db_model = FacilitiesOrm
-    schema = Facility
+    schema = FacilityDTO
 
 
 class RoomsFacilitiesDataMapper(DataMapper):
     db_model = RoomsFacilitiesOrm
-    schema = RoomFacility
+    schema = RoomFacilityDTO

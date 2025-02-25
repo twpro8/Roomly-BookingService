@@ -8,7 +8,7 @@ from src.repositories.base import BaseRepository
 from src.models.hotels import HotelsORM
 from src.models.rooms import RoomsORM
 from src.repositories.mappers.mappers import HotelDataMapper
-from src.schemas.hotels import Hotel
+from src.schemas.hotels import HotelDTO
 from src.repositories.utils import rooms_ids_for_booking
 
 
@@ -24,7 +24,7 @@ class HotelsRepository(BaseRepository):
         title,
         limit,
         offset,
-    ) -> list[Hotel]:
+    ) -> list[HotelDTO]:
         rooms_ids_to_get = rooms_ids_for_booking(date_from=date_from, date_to=date_to)
         hotels_ids_to_get = (
             select(RoomsORM.hotel_id)

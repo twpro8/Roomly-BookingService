@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from src.database import null_pool_engine
-from src.schemas.bookings import Booking
+from src.schemas.bookings import BookingDTO
 from src.models import BookingsORM
 
 
@@ -66,7 +66,7 @@ async def test_add_booking(
         assert "data" in response_json
 
         try:
-            Booking(**response_json["data"])
+            BookingDTO(**response_json["data"])
         except ValidationError as e:
             assert False, f"Booking data validation failed: {e}"
 

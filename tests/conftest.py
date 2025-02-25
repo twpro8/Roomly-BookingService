@@ -2,7 +2,7 @@
 import pytest
 from unittest import mock
 
-from src.schemas.facilities import FacilityAddRequest
+from src.schemas.facilities import FacilityAddRequestDTO
 
 mock.patch("fastapi_cache.decorator.cache", lambda *args, **kwargs: lambda func: func).start()
 
@@ -15,8 +15,8 @@ from src import settings
 from src.api.dependencies import get_db
 from src.database import Base, null_pool_engine, null_pool_session_maker
 from src.models import *  # noqa
-from src.schemas.hotels import HotelAdd
-from src.schemas.rooms import RoomAdd
+from src.schemas.hotels import HotelAddDTO
+from src.schemas.rooms import RoomAddDTO
 from src.utils.db_manager import DBManager
 from src.main import app
 
@@ -46,10 +46,10 @@ async def setup_database(check_test_mode):
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-    hotels_data = [HotelAdd.model_validate(hotel) for hotel in read_json("mock_hotels")]
-    rooms_data = [RoomAdd.model_validate(room) for room in read_json("mock_rooms")]
+    hotels_data = [HotelAddDTO.model_validate(hotel) for hotel in read_json("mock_hotels")]
+    rooms_data = [RoomAddDTO.model_validate(room) for room in read_json("mock_rooms")]
     facilities_data = [
-        FacilityAddRequest.model_validate(facility) for facility in read_json("mock_facilities")
+        FacilityAddRequestDTO.model_validate(facility) for facility in read_json("mock_facilities")
     ]
 
     async with DBManager(session_factory=null_pool_session_maker) as db_:

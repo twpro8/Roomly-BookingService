@@ -4,7 +4,7 @@ from src.exceptions import (
     ObjectAlreadyExistsException,
     FacilityAlreadyExistsException,
 )
-from src.schemas.facilities import FacilityAddRequest
+from src.schemas.facilities import FacilityAddRequestDTO
 from src.services.base import BaseService
 from src.tasks.tasks import test_task
 
@@ -13,7 +13,7 @@ class FacilityService(BaseService):
     async def get_facilities(self):
         return await self.db.facilities.get_all()
 
-    async def add_facility(self, data: FacilityAddRequest):
+    async def add_facility(self, data: FacilityAddRequestDTO):
         try:
             facility = await self.db.facilities.add(data)
         except ObjectAlreadyExistsException:

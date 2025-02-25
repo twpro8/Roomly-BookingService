@@ -11,7 +11,7 @@ from src.exceptions import (
     HotelNotFoundException,
     HotelNotFoundHTTPException,
 )
-from src.schemas.bookings import BookingAddRequest
+from src.schemas.bookings import BookingAddRequestDTO
 from src.api.dependencies import DBDep, UserIdDep
 from src.services.bookings import BookingService
 
@@ -27,7 +27,7 @@ async def get_my_bookings(db: DBDep, user_id: UserIdDep):
 async def add_booking(
     db: DBDep,
     user_id: UserIdDep,
-    booking_data: BookingAddRequest = Body(),
+    booking_data: BookingAddRequestDTO = Body(),
 ):
     try:
         booking = await BookingService(db).create_booking(user_id, booking_data)

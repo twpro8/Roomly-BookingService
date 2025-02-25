@@ -1,7 +1,7 @@
 from typing import Any
 
 import pytest
-from src.schemas.hotels import Hotel
+from src.schemas.hotels import HotelDTO
 
 
 async def test_get_hotels(ac):
@@ -232,7 +232,7 @@ async def test_delete_hotel(ac, hotel_id: int, status_code: int):
 
 
 def validate_hotel_data(hotel, hotel_id: int, title: str | None, location: str | None):
-    assert Hotel.model_validate(hotel)
+    assert HotelDTO.model_validate(hotel)
     assert hotel["id"] == hotel_id
     if title is not None:
         assert hotel["title"] == title

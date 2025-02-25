@@ -2,7 +2,7 @@ from datetime import date
 from pydantic import BaseModel, Field, ConfigDict
 
 
-class BookingAddRequest(BaseModel):
+class BookingAddRequestDTO(BaseModel):
     hotel_id: int = Field(gt=0, lt=2147483647)
     room_id: int = Field(gt=0, lt=2147483647)
     date_from: date
@@ -11,7 +11,7 @@ class BookingAddRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class BookingAdd(BaseModel):
+class BookingAddDTO(BaseModel):
     user_id: int
     room_id: int
     date_from: date
@@ -19,5 +19,5 @@ class BookingAdd(BaseModel):
     price: int = Field(gt=0, lt=2147483647)
 
 
-class Booking(BookingAdd):
+class BookingDTO(BookingAddDTO):
     id: int

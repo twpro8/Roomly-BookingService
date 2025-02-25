@@ -5,8 +5,8 @@ from src.exceptions import (
     RoomAlreadyExistsException,
     HotelNotFoundException,
 )
-from src.schemas.facilities import RoomFacilityAdd
-from src.schemas.rooms import RoomAddRequest, RoomAdd, RoomPatchRequest, RoomPatch
+from src.schemas.facilities import RoomFacilityAddDTO
+from src.schemas.rooms import RoomAddRequestDTO, RoomAddDTO, RoomPatchRequestDTO, RoomPatchDTO
 from src.services.base import BaseService
 
 
@@ -28,7 +28,7 @@ class RoomService(BaseService):
     async def creat_room(
         self,
         hotel_id: int,
-        room_data: RoomAddRequest,
+        room_data: RoomAddRequestDTO,
     ):
         existing_room = await self.db.rooms.get_one_or_none(
             hotel_id=hotel_id, title=room_data.title
@@ -38,20 +38,21 @@ class RoomService(BaseService):
         hotel = await self.db.hotels.get_one_or_none(id=hotel_id)
         if not hotel:
             raise HotelNotFoundException
-        _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
+        _room_data = RoomAddDTO(hotel_id=hotel_id, **room_data.model_dump())
         room = await self.db.rooms.add(_room_data)
         rooms_facilities_data = [
-            RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in room_data.facilities_ids
+            RoomFacilityAddDTO(room_id=room.id, facility_id=f_id)
+            for f_id in room_data.facilities_ids
         ]
         if rooms_facilities_data:
             await self.db.rooms_facilities.add_bulk(rooms_facilities_data)
         await self.db.commit()
         return room
 
-    async def edit_room(self, hotel_id: int, room_id: int, room_data: RoomAddRequest) -> None:
+    async def edit_room(self, hotel_id: int, room_id: int, room_data: RoomAddRequestDTO) -> None:
         await self.db.hotels.get_hotel(id=hotel_id)
         await self.db.rooms.get_room(id=room_id, hotel_id=hotel_id)
-        _room_data = RoomAdd(hotel_id=hotel_id, **room_data.model_dump())
+        _room_data = RoomAddDTO(hotel_id=hotel_id, **room_data.model_dump())
         await self.db.rooms.edit(_room_data, id=room_id)
         await self.db.rooms_facilities.add_facilities(
             room_id=room_id, facilities_ids=room_data.facilities_ids
@@ -59,12 +60,12 @@ class RoomService(BaseService):
         await self.db.commit()
 
     async def partly_edit_room(
-        self, hotel_id: int, room_id: int, room_data: RoomPatchRequest
+        self, hotel_id: int, room_id: int, room_data: RoomPatchRequestDTO
     ) -> None:
         await self.db.hotels.get_hotel(id=hotel_id)
         await self.db.rooms.get_room(id=room_id, hotel_id=hotel_id)
         _model_dump = room_data.model_dump(exclude_unset=True)
-        _room_data = RoomPatch(hotel_id=hotel_id, **_model_dump)
+        _room_data = RoomPatchDTO(hotel_id=hotel_id, **_model_dump)
         await self.db.rooms.edit(_room_data, exclude_unset=True, id=room_id, hotel_id=hotel_id)
         if "facilities_ids" in _model_dump:
             await self.db.rooms_facilities.add_facilities(

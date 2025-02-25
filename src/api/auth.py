@@ -13,7 +13,7 @@ from src.exceptions import (
     UsernameAlreadyExistsHTTPException,
     UsernameAlreadyExistsException,
 )
-from src.schemas.users import UserRequestAdd, UserLogin, UserPatchRequest
+from src.schemas.users import UserRequestAddDTO, UserLoginDTO, UserPatchRequestDTO
 from src.services.auth import AuthService
 
 from src.api.dependencies import DBDep
@@ -23,7 +23,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/register", summary="📝 Sign up")
-async def register(db: DBDep, data: UserRequestAdd):
+async def register(db: DBDep, data: UserRequestAddDTO):
     try:
         await AuthService(db).register_user(data=data)
     except UserAlreadyExistsException:
@@ -32,7 +32,7 @@ async def register(db: DBDep, data: UserRequestAdd):
 
 
 @router.post("/login", summary="🔑 Log in")
-async def login(db: DBDep, data: UserLogin, response: Response):
+async def login(db: DBDep, data: UserLoginDTO, response: Response):
     try:
         access_token = await AuthService(db).login_user(data=data)
     except UserDoesNotExistException:
@@ -50,7 +50,7 @@ async def get_me(db: DBDep, user_id: UserIdDep):
 
 
 @router.patch("/me", summary="⚙️ Edit my profile")
-async def partly_edit_user(db: DBDep, user_id: UserIdDep, data: UserPatchRequest):
+async def partly_edit_user(db: DBDep, user_id: UserIdDep, data: UserPatchRequestDTO):
     try:
         await AuthService(db).partly_edit_user(user_id=user_id, data=data)
     except UsernameAlreadyExistsException:

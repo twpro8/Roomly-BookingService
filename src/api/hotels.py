@@ -10,7 +10,7 @@ from src.exceptions import (
     HotelAlreadyExistsException,
     HotelNotFoundException,
 )
-from src.schemas.hotels import HotelPATCH, HotelAdd
+from src.schemas.hotels import HotelPatchDTO, HotelAddDTO
 from src.api.dependencies import PaginationDep, DBDep
 from src.services.hotels import HotelService
 from src.api.utils import TypeID
@@ -51,7 +51,7 @@ async def get_hotel(db: DBDep, hotel_id: TypeID):
 @router.post("")
 async def add_hotel(
     db: DBDep,
-    hotel_data: HotelAdd = Body(
+    hotel_data: HotelAddDTO = Body(
         openapi_examples={
             "1": {
                 "summary": "NY",
@@ -78,7 +78,7 @@ async def add_hotel(
 
 
 @router.put("/{hotel_id}", summary="Edit The Entire Hotel")
-async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: TypeID):
+async def edit_hotel(db: DBDep, hotel_data: HotelAddDTO, hotel_id: TypeID):
     try:
         await HotelService(db).edit_hotel(hotel_id, hotel_data)
     except HotelAlreadyExistsException:
@@ -96,7 +96,7 @@ async def edit_hotel(db: DBDep, hotel_data: HotelAdd, hotel_id: TypeID):
     <h3>Description</h3>
     You can edit several or all attributes of the hotel.""",
 )
-async def partly_edit_hotel(db: DBDep, hotel_data: HotelPATCH, hotel_id: TypeID):
+async def partly_edit_hotel(db: DBDep, hotel_data: HotelPatchDTO, hotel_id: TypeID):
     try:
         await HotelService(db).partly_edit_hotel(hotel_id, hotel_data)
     except HotelAlreadyExistsException:

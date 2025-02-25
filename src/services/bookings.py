@@ -5,7 +5,7 @@ from src.exceptions import (
     HotelNotFoundException,
     NoAvailableRoomsException,
 )
-from src.schemas.bookings import BookingAddRequest, BookingAdd, Booking
+from src.schemas.bookings import BookingAddRequestDTO, BookingAddDTO, BookingDTO
 from src.services.base import BaseService
 
 
@@ -16,13 +16,13 @@ class BookingService(BaseService):
     async def get_my_bookings(self, user_id: int):
         return await self.db.bookings.get_filtered(user_id=user_id)
 
-    async def create_booking(self, user_id: int, booking_data: BookingAddRequest) -> Booking:
+    async def create_booking(self, user_id: int, booking_data: BookingAddRequestDTO) -> BookingDTO:
         try:
             await self.db.hotels.get_hotel(id=booking_data.hotel_id)
             room = await self.db.rooms.get_room(
                 id=booking_data.room_id, hotel_id=booking_data.hotel_id
             )
-            new_data = BookingAdd(
+            new_data = BookingAddDTO(
                 user_id=user_id,
                 room_id=booking_data.room_id,
                 date_from=booking_data.date_from,

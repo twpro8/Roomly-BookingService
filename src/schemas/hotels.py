@@ -1,14 +1,14 @@
 from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 
-class HotelAdd(BaseModel):
+class HotelAddDTO(BaseModel):
     title: str = Field(min_length=5, max_length=100)
     location: str = Field(min_length=5, max_length=100)
 
     model_config = ConfigDict(extra="forbid")
 
 
-class HotelPATCH(BaseModel):
+class HotelPatchDTO(BaseModel):
     title: str | None = Field(None, min_length=5, max_length=100)
     location: str | None = Field(None, min_length=5, max_length=100)
 
@@ -25,5 +25,5 @@ class HotelPATCH(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class Hotel(HotelAdd):
+class HotelDTO(HotelAddDTO):
     id: int = Field(gt=0, lt=2147483647)

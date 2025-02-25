@@ -4,7 +4,7 @@ from typing import Any
 from httpx import AsyncClient
 from pydantic import ValidationError
 
-from src.schemas.facilities import Facility
+from src.schemas.facilities import FacilityDTO
 
 
 @pytest.mark.parametrize(
@@ -60,7 +60,7 @@ async def test_get_facilities(ac: AsyncClient) -> None:
 
     for facility in facilities:
         try:
-            Facility(**facility)
+            FacilityDTO(**facility)
         except ValidationError as e:
             assert False, f"Facility data validation failed: {e}"
 

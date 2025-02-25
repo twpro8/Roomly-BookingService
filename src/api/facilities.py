@@ -7,7 +7,7 @@ from src.exceptions import (
     FacilityAlreadyExistsException,
     FacilityAlreadyExistsHTTPException,
 )
-from src.schemas.facilities import FacilityAddRequest
+from src.schemas.facilities import FacilityAddRequestDTO
 from src.api.dependencies import DBDep
 from src.services.facilities import FacilityService
 from src.api.utils import TypeID
@@ -23,7 +23,7 @@ async def get_facilities(db: DBDep):
 
 
 @router.post("")
-async def add_facility(db: DBDep, facility_data: FacilityAddRequest = Body()):
+async def add_facility(db: DBDep, facility_data: FacilityAddRequestDTO = Body()):
     try:
         facility = await FacilityService(db).add_facility(facility_data)
     except FacilityAlreadyExistsException:

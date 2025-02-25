@@ -1,9 +1,9 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
 
-from src.schemas.facilities import Facility
+from src.schemas.facilities import FacilityDTO
 
 
-class RoomAddRequest(BaseModel):
+class RoomAddRequestDTO(BaseModel):
     title: str = Field(min_length=5, max_length=50)
     description: str | None = Field(default=None, min_length=5, max_length=50)
     price: int = Field(default=888, gt=0, lt=1000000)
@@ -13,7 +13,7 @@ class RoomAddRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class RoomAdd(BaseModel):
+class RoomAddDTO(BaseModel):
     hotel_id: int
     title: str
     description: str | None = None
@@ -21,7 +21,7 @@ class RoomAdd(BaseModel):
     quantity: int
 
 
-class RoomPatchRequest(BaseModel):
+class RoomPatchRequestDTO(BaseModel):
     title: str | None = Field(default=None, min_length=5, max_length=50)
     description: str | None = Field(default=None, min_length=5, max_length=50)
     price: int | None = Field(default=None, gt=0, lt=1000000)
@@ -44,7 +44,7 @@ class RoomPatchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class RoomPatch(BaseModel):
+class RoomPatchDTO(BaseModel):
     hotel_id: int
     title: str | None = None
     description: str | None = None
@@ -52,9 +52,9 @@ class RoomPatch(BaseModel):
     quantity: int | None = None
 
 
-class Room(RoomAdd):
+class RoomDTO(RoomAddDTO):
     id: int
 
 
-class RoomWithRels(Room):
-    facilities: list[Facility]
+class RoomWithRelsDTO(RoomDTO):
+    facilities: list[FacilityDTO]

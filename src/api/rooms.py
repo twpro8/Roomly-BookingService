@@ -10,7 +10,7 @@ from src.exceptions import (
     RoomAlreadyExistsException,
     RoomAlreadyExistsHTTPException,
 )
-from src.schemas.rooms import RoomAddRequest, RoomPatchRequest
+from src.schemas.rooms import RoomAddRequestDTO, RoomPatchRequestDTO
 from src.api.dependencies import DBDep
 from src.services.rooms import RoomService
 from src.api.utils import TypeID
@@ -38,7 +38,7 @@ async def get_room(db: DBDep, hotel_id: TypeID, room_id: TypeID):
 
 
 @router.post("/{hotel_id}/rooms")
-async def add_room(db: DBDep, hotel_id: TypeID, room_data: RoomAddRequest = Body()):
+async def add_room(db: DBDep, hotel_id: TypeID, room_data: RoomAddRequestDTO = Body()):
     try:
         room = await RoomService(db).creat_room(hotel_id, room_data)
     except HotelNotFoundException:
@@ -55,7 +55,7 @@ async def add_room(db: DBDep, hotel_id: TypeID, room_data: RoomAddRequest = Body
                 <h3>Description</h3>
                 You have to edit all the attributes of the room at once""",
 )
-async def edit_room(db: DBDep, room_data: RoomAddRequest, hotel_id: TypeID, room_id: TypeID):
+async def edit_room(db: DBDep, room_data: RoomAddRequestDTO, hotel_id: TypeID, room_id: TypeID):
     try:
         await RoomService(db).edit_room(hotel_id, room_id, room_data)
     except HotelNotFoundException:
@@ -73,7 +73,7 @@ async def edit_room(db: DBDep, room_data: RoomAddRequest, hotel_id: TypeID, room
             You can edit several or all the attributes of the room""",
 )
 async def partly_edit_room(
-    db: DBDep, room_data: RoomPatchRequest, hotel_id: TypeID, room_id: TypeID
+    db: DBDep, room_data: RoomPatchRequestDTO, hotel_id: TypeID, room_id: TypeID
 ):
     try:
         await RoomService(db).partly_edit_room(hotel_id, room_id, room_data)

@@ -14,7 +14,13 @@ from src.exceptions import (
     UsernameAlreadyExistsException,
     EmailAlreadyExistsException,
 )
-from src.schemas.users import UserRequestAdd, AddUser, UserLogin, UserPatch, UserPatchRequest
+from src.schemas.users import (
+    UserRequestAddDTO,
+    UserAddDTO,
+    UserLoginDTO,
+    UserPatchDTO,
+    UserPatchRequestDTO,
+)
 from src.services.base import BaseService
 
 
@@ -48,11 +54,11 @@ class AuthService(BaseService):
         except jwt.exceptions.ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="Signature has expired")
 
-    async def register_user(self, data: UserRequestAdd) -> None:
+    async def register_user(self, data: UserRequestAddDTO) -> None:
         normalized_email = data.email.strip().lower()
         hashed_password = self.hash_password(data.password)
 
-        new_user_data = AddUser(
+        new_user_data = UserAddDTO(
             username=data.username, email=normalized_email, hashed_password=hashed_password
         )
         try:
@@ -61,7 +67,7 @@ class AuthService(BaseService):
             raise UserAlreadyExistsException
         await self.db.commit()
 
-    async def login_user(self, data: UserLogin):
+    async def login_user(self, data: UserLoginDTO):
         user = await self.db.users.get_user_with_hashed_password(username=data.username)
         if not user:
             raise UserDoesNotExistException
@@ -82,7 +88,7 @@ class AuthService(BaseService):
     async def get_me(self, user_id: int):
         return await self.db.users.get_one_or_none(id=user_id)
 
-    async def partly_edit_user(self, user_id: int, data: UserPatchRequest) -> None:
+    async def partly_edit_user(self, user_id: int, data: UserPatchRequestDTO) -> None:
         new_data = {}
         if data.username:
             existing_user = await self.db.users.get_one_or_none(username=data.username)
@@ -101,7 +107,7 @@ class AuthService(BaseService):
         if data.bio:
             new_data["bio"] = data.bio
 
-        data_to_add = UserPatch(**new_data)
+        data_to_add = UserPatchDTO(**new_data)
 
         await self.db.users.edit(id=user_id, data=data_to_add, exclude_unset=True)
         await self.db.commit()
