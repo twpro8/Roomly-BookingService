@@ -22,7 +22,7 @@ from src.api.dependencies import DBDep
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/register")
+@router.post("/register", summary="📝 Sign up")
 async def register(db: DBDep, data: UserRequestAdd):
     try:
         await AuthService(db).register_user(data=data)
@@ -31,7 +31,7 @@ async def register(db: DBDep, data: UserRequestAdd):
     return {"status": "ok"}
 
 
-@router.post("/login")
+@router.post("/login", summary="🔑 Log in")
 async def login(db: DBDep, data: UserLogin, response: Response):
     try:
         access_token = await AuthService(db).login_user(data=data)
@@ -44,12 +44,12 @@ async def login(db: DBDep, data: UserLogin, response: Response):
     return {"status": "ok", "access_token": access_token}
 
 
-@router.get("/me")
+@router.get("/me", summary="👨‍💻 My profile")
 async def get_me(db: DBDep, user_id: UserIdDep):
     return await AuthService(db).get_me(user_id)
 
 
-@router.patch("/me")
+@router.patch("/me", summary="⚙️ Edit my profile")
 async def partly_edit_user(db: DBDep, user_id: UserIdDep, data: UserPatchRequest):
     try:
         await AuthService(db).partly_edit_user(user_id=user_id, data=data)
@@ -60,7 +60,7 @@ async def partly_edit_user(db: DBDep, user_id: UserIdDep, data: UserPatchRequest
     return {"status": "ok"}
 
 
-@router.post("/logout")
+@router.post("/logout", summary="🔒 Log out")
 async def logout(response: Response):
     response.delete_cookie("access_token")
     return {"status": "ok"}
